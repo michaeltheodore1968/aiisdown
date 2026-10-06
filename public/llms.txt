@@ -1,0 +1,26 @@
+# Is AI Down?
+
+> Live status of the main AI services (ChatGPT, Claude, Gemini, Perplexity, Microsoft Copilot, Grok, DeepSeek, Mistral Le Chat, GitHub Copilot and Cursor). Each service is checked every five minutes by combining the provider's own status page with an independent reachability test.
+
+## How to read it
+- Verdicts: operational, degraded ("having issues") or outage ("down"). An unknown verdict means we cannot tell yet.
+- A single failed check of ours never overrides a healthy official status page; see the method below.
+- Times are UTC.
+
+## Pages
+- [All services](https://aiisdown.com/): current verdict for every service
+- [Is ChatGPT down?](https://aiisdown.com/is-chatgpt-down)
+- [Is Claude down?](https://aiisdown.com/is-claude-down)
+- [Is Gemini down?](https://aiisdown.com/is-gemini-down)
+- [Is Perplexity down?](https://aiisdown.com/is-perplexity-down)
+- [Is Microsoft Copilot down?](https://aiisdown.com/is-copilot-down)
+- [Is Grok down?](https://aiisdown.com/is-grok-down)
+- [Is DeepSeek down?](https://aiisdown.com/is-deepseek-down)
+- [Is Mistral Le Chat down?](https://aiisdown.com/is-mistral-down)
+- [Is GitHub Copilot down?](https://aiisdown.com/is-github-copilot-down)
+- [Is Cursor down?](https://aiisdown.com/is-cursor-down)
+
+## Method and data
+- [How we check](https://aiisdown.com/guides/how-we-check): exactly what is measured and what it cannot tell you
+- [JSON, all services](https://aiisdown.com/api/status.json)
+- [JSON, one service](https://aiisdown.com/api/chatgpt.json): replace the name with any service slug

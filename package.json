@@ -1,0 +1,17 @@
+{
+  "name": "aiisdown",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Live status of the major AI services, on Cloudflare Workers.",
+  "scripts": {
+    "dev": "wrangler dev --test-scheduled",
+    "test": "node --test \"test/*.test.js\"",
+    "db:local": "wrangler d1 migrations apply DB --local",
+    "db:remote": "wrangler d1 migrations apply DB --remote",
+    "deploy": "wrangler deploy"
+  },
+  "devDependencies": {
+    "wrangler": "^4.147.0"
+  }
+}
