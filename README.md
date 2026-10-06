@@ -41,7 +41,10 @@ curl "http://127.0.0.1:8787/__scheduled?cron=*%2F5+*+*+*+*"   # run the checks o
 1. `npx wrangler login`
 2. `npx wrangler d1 create aiisdown`, then add the printed `database_id` to the `d1_databases` entry in `wrangler.jsonc`.
 3. `npm run db:remote` then `npm run deploy`. The site is live at `aiisdown.<your-subdomain>.workers.dev` and marks itself `noindex` while it is on that address.
-4. Buy `aiisdown.com`, add it to Cloudflare as a site, change the nameservers at the registrar, then in the dashboard open Workers & Pages, aiisdown, Settings, Domains & Routes and add `aiisdown.com` as a custom domain. Update `SITE_URL` in `wrangler.jsonc` if you use a different domain, and the `Sitemap:` line in `public/robots.txt` and the links in `public/llms.txt`.
+4. Buy the domain through Cloudflare: in the dashboard open Domain Registration, Register Domains and search for `aiisdown.com`. Cloudflare sells domains at cost, about $10.46 a year for a `.com` with the same price at renewal (a third-party tracker's figure from May 2026, so check the price at checkout, which may add VAT). Because the domain is registered there, its DNS is already on Cloudflare and no nameserver change is needed.
+5. Attach it to the Worker: open Workers & Pages, aiisdown, Settings, Domains & Routes, then add `aiisdown.com` as a custom domain. If you chose a different domain, update `SITE_URL` in `wrangler.jsonc`, the `Sitemap:` line in `public/robots.txt` and the links in `public/llms.txt`, then deploy again.
+
+If you buy the domain somewhere else instead (GoDaddy, say), add it to Cloudflare as a site and change the nameservers at that registrar to the two Cloudflare gives you. Copy any existing DNS records across first, especially mail records (MX, SPF, DKIM and DMARC), or email will stop arriving. Then follow step 5.
 
 ## Before applying to AdSense
 
