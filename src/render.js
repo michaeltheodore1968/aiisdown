@@ -40,7 +40,10 @@ ${noindex ? '<meta name="robots" content="noindex">' : '<meta name="robots" cont
 <meta property="og:title" content="${esc(title)}">
 <meta property="og:description" content="${esc(description)}">
 <meta property="og:url" content="${esc(url)}">
-<meta name="twitter:card" content="summary">
+<meta property="og:image" content="${esc(site)}/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="/style.css">
 ${ld.map(jsonLd).join('\n')}
@@ -49,7 +52,7 @@ ${ads}
 <body>
 <a class="skip" href="#main">Skip to the content</a>
 <header class="site-header"><div class="wrap">
-<a class="brand" href="/"><span class="brand-mark" aria-hidden="true">AI</span> Is AI Down?</a>
+<a class="brand" href="/"><img class="brand-mark" src="/logo-mark.svg" width="32" height="32" alt=""> Is AI Down?</a>
 <nav aria-label="Main"><a href="/">All services</a><a href="/guides">Guides</a><a href="/about">About</a></nav>
 </div></header>
 <main id="main" class="wrap">

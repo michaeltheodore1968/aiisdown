@@ -25,6 +25,13 @@ test('home page: names the services in trouble', () => {
   assert.match(html, /class="hero bad"/);
 });
 
+test('layout carries the logo and a social card image', () => {
+  const html = homePage(env, {}, now);
+  assert.match(html, /<img class="brand-mark" src="\/logo-mark\.svg"/);
+  assert.match(html, /og:image" content="https:\/\/aiisdown\.com\/og\.png"/);
+  assert.match(html, /summary_large_image/);
+});
+
 test('home page renders before any data exists', () => {
   assert.match(homePage(env, {}, now), /Running our first checks/);
 });

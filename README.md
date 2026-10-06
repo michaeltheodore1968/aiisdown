@@ -53,6 +53,10 @@ curl "http://127.0.0.1:8787/__scheduled?cron=*%2F5+*+*+*+*"   # run the checks o
 - Do not add auto-refresh to pages. Refreshing to inflate impressions breaks AdSense policy.
 - Let the site build some history and traffic first. Thin new sites are often rejected on the first try.
 
+## Brand
+
+A heartbeat line in a rounded blue square (`#1d4ed8`) with a green status light, set in Liberation Sans Bold. `python3 brand/make_logo.py` (needs `pip install fonttools`) regenerates `public/logo.svg`, `logo-reversed.svg`, `logo-mark.svg`, `favicon.svg` and `og.svg`. The two PNGs (`logo-mark-512.png` and the 1200 by 630 social card `og.png`) are rendered from those SVGs in a browser.
+
 ## Adding a service
 
 Add an entry to `src/platforms.js`. Check the feed first: `curl <status-url>/api/v2/summary.json`. Services without a feed need at least one `core: true` probe. Add the page to `public/llms.txt`.
