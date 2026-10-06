@@ -1,7 +1,9 @@
 """Generate the Is AI Down? logo files into ../public.
 
 Concept: a heartbeat line (is it alive?) in a rounded blue square, with a
-green status light in the corner. Lettering is converted to outlines so the
+green status light in the corner. The big peak reads as the A; the small
+narrow spike after it is the stem of an i, with the green status light as
+its dot. Lettering is converted to outlines so the
 files look the same everywhere. Needs: pip install fonttools.
 Run: python3 brand/make_logo.py
 """
@@ -40,9 +42,9 @@ def mark(x=0, y=0, size=64, bg=BLUE, line=WHITE, dot=GREEN, ring=None):
     return (
         f'<g transform="translate({x} {y}) scale({k})">'
         f'<rect width="64" height="64" rx="15" fill="{bg}"/>'
-        f'<path d="M9 37H20L27 21L35 51L42 37H55" fill="none" stroke="{line}" '
+        f'<path d="M8 37H17L24 20L31.5 51L38 37H44L47.5 27L51 37H56" fill="none" stroke="{line}" '
         f'stroke-width="4.6" stroke-linecap="round" stroke-linejoin="round"/>'
-        f'<circle cx="49" cy="15" r="7.5" fill="{dot}" stroke="{ring}" stroke-width="3.5"/>'
+        f'<circle cx="47.5" cy="13" r="6.5" fill="{dot}" stroke="{ring}" stroke-width="3"/>'
         f"</g>"
     )
 
