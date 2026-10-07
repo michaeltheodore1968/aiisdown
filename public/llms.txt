@@ -21,6 +21,7 @@
 - [Is Cursor down?](https://aiisdown.com/is-cursor-down)
 
 ## Method and data
+- [FAQ](https://aiisdown.com/faq): common questions about how verdicts work
 - [How we check](https://aiisdown.com/guides/how-we-check): exactly what is measured and what it cannot tell you
 - [JSON, all services](https://aiisdown.com/api/status.json)
 - [JSON, one service](https://aiisdown.com/api/chatgpt.json): replace the name with any service slug

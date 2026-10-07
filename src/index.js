@@ -1,7 +1,7 @@
 import { PLATFORMS, BY_SLUG, pagePath } from './platforms.js';
 import { runChecks } from './run.js';
 import { homePage, platformPage, apiStatus, apiService } from './render.js';
-import { GUIDES, guidesIndex, guidePage, aboutPage, privacyPage, termsPage, contactPage, notFoundPage } from './content.js';
+import { GUIDES, guidesIndex, guidePage, faqPage, aboutPage, privacyPage, termsPage, contactPage, notFoundPage } from './content.js';
 
 const HTML = { 'content-type': 'text/html; charset=utf-8' };
 const SHORT_CACHE = 'public, max-age=60';
@@ -57,6 +57,7 @@ function sitemap(env) {
     ...PLATFORMS.map((p) => pagePath(p.slug)),
     '/guides',
     ...GUIDES.map((g) => `/guides/${g.id}`),
+    '/faq',
     '/about',
     '/privacy',
     '/terms',
@@ -97,7 +98,7 @@ async function route(request, env, ctx) {
     return html(platformPage(env, p, states[slug], await loadExtras(env, slug), now), 200, extra);
   }
 
-  const simple = { '/guides': guidesIndex, '/about': aboutPage, '/privacy': privacyPage, '/terms': termsPage, '/contact': contactPage };
+  const simple = { '/guides': guidesIndex, '/faq': faqPage, '/about': aboutPage, '/privacy': privacyPage, '/terms': termsPage, '/contact': contactPage };
   if (simple[path]) return html(simple[path](env), 200, { ...extra, 'cache-control': 'public, max-age=3600' });
   if ((m = path.match(/^\/guides\/([a-z-]+)$/))) {
     const g = guidePage(env, m[1]);

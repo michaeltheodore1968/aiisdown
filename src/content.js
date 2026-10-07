@@ -111,6 +111,80 @@ export function guidePage(env, id) {
   });
 }
 
+const FAQS = () => [
+  [
+    'How does Is AI Down? decide that a service is down?',
+    'We combine two signals every five minutes: the provider’s own status page, where one can be read by machine, and our own test that sends a plain request to the service. Our test on its own can never mark a service “down” while the provider’s status page says it is fine. The full method is in <a href="/guides/how-we-check">how we check</a>.',
+  ],
+  [
+    'How often are the checks run?',
+    'Every five minutes. Each page shows when the last check ran.',
+  ],
+  [
+    'Why does a service say “having issues” and not “down”?',
+    '“Having issues” means the provider reports a problem with part of the service, or our checks have failed more than once in a row. We only say “down” when the provider reports a major outage of its core service or, for services with no readable status feed, our checks have failed for about fifteen minutes in a row.',
+  ],
+  [
+    'The site says a service is up, but it does not work for me. Why?',
+    'A verdict describes the service as a whole. It cannot see your account, your network, your region or whether you have reached a usage limit. Read <a href="/guides/status-page-says-up-but-broken">why a service can be up but broken for you</a>, then work through <a href="/guides/ai-chatbot-not-working">what to do when an AI chatbot stops working</a>.',
+  ],
+  [
+    'Which services do you cover?',
+    `${PLATFORMS.map((p) => esc(p.name)).join(', ')}. Each has its own page, and the home page shows them all together.`,
+  ],
+  [
+    'Why do some pages say they rely on our own checks?',
+    'Microsoft Copilot, Grok and DeepSeek publish no status feed that a script can read, so those verdicts rest on our own checks and the page says so. Google publishes no feed for the Gemini app itself, so for Gemini we read Google Cloud’s incident list for Gemini and Vertex AI and combine it with our own checks.',
+  ],
+  [
+    'Can you tell me how fast or how good an AI service is?',
+    'No. We can only tell whether a service responds and what its provider reports. We cannot measure how slow it is, or how good its answers are.',
+  ],
+  [
+    'A verdict looks wrong, or I want another service added. What should I do?',
+    'Tell us through the <a href="/contact">contact page</a>. Please include the service name and roughly when you saw the problem.',
+  ],
+  [
+    'Are you connected to OpenAI, Anthropic, Google or the other companies?',
+    'No. Is AI Down? is independent. We use the companies’ names only to say which service a page is about.',
+  ],
+  [
+    'Can I use your data in my own project?',
+    'Yes, for reasonable use. It is available as JSON at <a href="/api/status.json">/api/status.json</a>, with one file per service. Heavy use may be rate limited, and the <a href="/terms">terms</a> ask you to link back to us if you republish it.',
+  ],
+  [
+    'How is the site paid for?',
+    'We plan to show advertising. Advertising never changes a verdict.',
+  ],
+  [
+    'Do you collect my personal data?',
+    'We do not ask for accounts or personal details and we do not set our own cookies. Our hosting provider processes technical information about each request, and advertising partners may use cookies once ads are shown. The <a href="/privacy">privacy policy</a> has the detail.',
+  ],
+];
+
+export function faqPage(env) {
+  const faq = FAQS();
+  const plain = (h) => h.replace(/<[^>]+>/g, '').replace(/&amp;/g, '&');
+  return page(
+    env,
+    '/faq',
+    'Frequently asked questions | Is AI Down?',
+    'Answers to common questions about how Is AI Down? checks ChatGPT, Claude, Gemini and other AI services, and what its verdicts mean.',
+    `<h1>Frequently asked questions</h1>
+${faq.map(([q, a]) => `<h2>${esc(q)}</h2>\n<p>${a}</p>`).join('\n')}
+<p>Something not answered here? Use the <a href="/contact">contact page</a>.</p>`,
+    {
+      ld: [
+        {
+          '@context': 'https://schema.org',
+          '@type': 'FAQPage',
+          mainEntity: faq.map(([q, a]) => ({ '@type': 'Question', name: q, acceptedAnswer: { '@type': 'Answer', text: plain(a) } })),
+        },
+      ],
+    },
+  );
+}
+
 export function aboutPage(env) {
   return page(
     env,

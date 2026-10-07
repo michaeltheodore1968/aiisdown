@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { PLATFORMS, BY_SLUG } from '../src/platforms.js';
 import { homePage, platformPage, apiStatus, adUnit } from '../src/render.js';
-import { guidePage, GUIDES, aboutPage, contactPage } from '../src/content.js';
+import { guidePage, GUIDES, aboutPage, contactPage, faqPage } from '../src/content.js';
 
 const env = { SITE_URL: 'https://aiisdown.com', ADSENSE_CLIENT: '', ADSENSE_SLOT_TOP: '', ADSENSE_SLOT_INLINE: '', CONTACT_EMAIL: '', OPERATOR_NAME: '' };
 const now = Date.UTC(2026, 9, 6, 12, 0, 0);
@@ -74,6 +74,17 @@ test('ads render only when configured', () => {
   assert.equal(adUnit(env, 'abc'), '');
   assert.match(adUnit({ ...env, ADSENSE_CLIENT: 'ca-pub-1' }, '123'), /data-ad-slot="123"/);
   assert.equal(adUnit({ ...env, ADSENSE_CLIENT: 'ca-pub-1' }, ''), '');
+});
+
+test('faq page: questions, structured data and no em dashes', () => {
+  const html = faqPage(env);
+  assert.match(html, /<h1>Frequently asked questions<\/h1>/);
+  assert.match(html, /<link rel="canonical" href="https:\/\/aiisdown\.com\/faq">/);
+  assert.equal(html.includes('—'), false);
+  const blocks = [...html.matchAll(/<script type="application\/ld\+json">(.*?)<\/script>/gs)].map((m) => JSON.parse(m[1]));
+  const faq = blocks.find((b) => b['@type'] === 'FAQPage');
+  assert.ok(faq.mainEntity.length >= 10);
+  assert.equal(faq.mainEntity.some((q) => /<[a-z]/.test(q.acceptedAnswer.text)), false);
 });
 
 test('static pages build and use no em dashes', () => {
