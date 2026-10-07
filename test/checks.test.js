@@ -84,6 +84,18 @@ test('statuspage: an open incident with no component data still degrades a platf
   assert.equal(parseStatuspage(BY_SLUG.claude.feed, j).state, 'operational');
 });
 
+test('statuspage: a Claude Console problem does not turn Claude amber', () => {
+  const j = structuredClone(fx('claude'));
+  const consoleName = 'Claude Console (platform.claude.com)';
+  j.components = j.components.filter((c) => c.name !== consoleName);
+  j.components.push({ id: 'console', name: consoleName, status: 'degraded_performance', group: false });
+  j.incidents = [{ id: 'c1', name: 'Elevated errors on platform.claude.com', status: 'identified', impact: 'major', created_at: '2026-10-07T13:25:00Z', updated_at: '2026-10-07T17:28:00Z', components: [{ name: consoleName }] }];
+  const r = parseStatuspage(BY_SLUG.claude.feed, j);
+  assert.equal(r.state, 'operational');
+  assert.deepEqual(r.issues, []);
+  assert.equal(r.incidents.length, 0);
+});
+
 test('gcp: only open Gemini or Vertex AI incidents count', () => {
   const list = fx('gcp');
   assert.equal(parseGcp(BY_SLUG.gemini.feed, list).state, 'operational');

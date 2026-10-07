@@ -87,5 +87,6 @@ test('series and uptime', () => {
   assert.equal(days.length, 30);
   assert.deepEqual(days[29], { day: '2026-10-06', ok: 0, total: 1 });
   assert.equal(uptime({ a: [11, 11] }), null);
-  assert.equal(uptime({ a: [99, 100], b: [100, 100] }), 99.5);
+  assert.equal(uptime({ a: [287, 288], b: [288, 288], c: [288, 288] }), 99.9);
+  assert.equal(uptime({ a: [288, 288], b: [288, 288] }), null, 'two days is not enough');
 });

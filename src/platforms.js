@@ -47,6 +47,9 @@ export const PLATFORMS = [
     feed: {
       type: 'statuspage',
       url: 'https://status.claude.com/api/v2/summary.json',
+      // The developer console and the government product are left out: a console
+      // problem should not turn the whole service amber for people using claude.ai.
+      include: ['claude.ai', 'Claude API (api.anthropic.com)', 'Claude Code', 'Claude Cowork'],
       core: ['claude.ai'],
     },
     probes: [

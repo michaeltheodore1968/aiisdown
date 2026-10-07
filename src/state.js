@@ -44,7 +44,8 @@ export function daySeries(days, now) {
 }
 
 // Share of checks over the last 30 days that found the service fully
-// operational. Hidden until there is at least an hour of data.
+// operational. Hidden until there are at least three days of data (864 checks),
+// because a percentage from a few hours is misleading.
 export function uptime(days) {
   let ok = 0;
   let total = 0;
@@ -52,6 +53,6 @@ export function uptime(days) {
     ok += o;
     total += t;
   }
-  if (total < 12) return null;
+  if (total < 864) return null;
   return Math.round((ok / total) * 1000) / 10;
 }

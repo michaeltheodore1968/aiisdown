@@ -31,7 +31,7 @@ export const GUIDES = [
 <h2>Why we are careful about calling something down</h2>
 <p>Our own check on its own can never overrule a provider’s status page that says everything is fine. It can move a service to “having issues”, never to “down”. The most common mistake in a status checker is reporting a healthy site as dead because it dislikes scripts, and this rule is there to stop it.</p>
 <h2>The uptime figure</h2>
-<p>The 30-day figure is the share of our five-minute checks in which the service was fully operational. A partial problem counts against it. It is not the same as the provider’s own uptime promise and should not be read as one. It stays hidden until we have at least an hour of data.</p>
+<p>The 30-day figure is the share of our five-minute checks in which the service was fully operational. A partial problem counts against it. It is not the same as the provider’s own uptime promise and should not be read as one. It stays hidden until we have at least three days of data, and until then the page says it is still building history.</p>
 <h2>What we cannot see</h2>
 <p>We cannot see your account, your network, your region, or whether you have reached a usage limit. We cannot tell whether answers are slow or poor, only whether the service responds. Microsoft Copilot, Grok and DeepSeek publish no status feed we can read, so those verdicts rely on our own checks and say so on the page. Google publishes no feed for the Gemini app itself, so for Gemini we read Google Cloud’s incident list for Gemini and Vertex AI and combine it with our own checks.</p>
 <h2>Data for developers</h2>

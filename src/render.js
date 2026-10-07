@@ -109,7 +109,9 @@ function bars30(days) {
 
 const uptimeText = (days) => {
   const u = uptime(days);
-  return u === null ? 'Building history' : `${u}% operational, 30 days`;
+  if (u === null) return 'Building history';
+  const n = Object.values(days || {}).filter(([, t]) => t > 0).length;
+  return `${u}% operational, ${n < 30 ? `last ${n} days` : '30 days'}`;
 };
 
 // ------------------------------------------------------------ the words
