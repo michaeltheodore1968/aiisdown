@@ -59,6 +59,7 @@ ${ads}
 ${body}
 </main>
 <footer class="site-footer"><div class="wrap">
+<p>Is AI Down? is part of the Citeable group.<br>Citeable, The Packhouse, Broadwater Farm, Broadwater Road, West Malling, Kent, ME19 6HT<br><a href="tel:+447936855867">07936 855867</a></p>
 <p>Is AI Down? is an independent service. It is not affiliated with, or endorsed by, OpenAI, Anthropic, Google, Microsoft, Perplexity, xAI, DeepSeek, Mistral, GitHub or Anysphere. Product names belong to their owners.</p>
 <nav aria-label="Footer"><a href="/about">About</a><a href="/guides">Guides</a><a href="/privacy">Privacy</a><a href="/terms">Terms</a><a href="/contact">Contact</a><a href="/api/status.json">JSON API</a></nav>
 </div></footer>
