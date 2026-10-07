@@ -8,6 +8,7 @@
     {
       "binding": "DB",
       "database_name": "aiisdown",
+      "database_id": "bf4ba2f5-669c-48a2-96da-57b1c547cd88",
       "migrations_dir": "migrations"
     }
   ],
