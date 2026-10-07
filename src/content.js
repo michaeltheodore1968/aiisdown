@@ -12,6 +12,7 @@ const page = (env, path, title, description, html, extra = {}) =>
   });
 
 const operator = (env) => (env.OPERATOR_NAME ? esc(env.OPERATOR_NAME) : 'the operator of this website');
+const ADDRESS = 'The Packhouse, Broadwater Farm, Broadwater Road, West Malling, Kent, ME19 6HT';
 
 export const GUIDES = [
   {
@@ -32,7 +33,7 @@ export const GUIDES = [
 <h2>The uptime figure</h2>
 <p>The 30-day figure is the share of our five-minute checks in which the service was fully operational. A partial problem counts against it. It is not the same as the provider’s own uptime promise and should not be read as one. It stays hidden until we have at least an hour of data.</p>
 <h2>What we cannot see</h2>
-<p>We cannot see your account, your network, your region, or whether you have reached a usage limit. We cannot tell whether answers are slow or poor, only whether the service responds. For Gemini, Microsoft Copilot, Grok and DeepSeek the providers publish no feed we can read, so those verdicts lean more heavily on our own checks and say so on the page.</p>
+<p>We cannot see your account, your network, your region, or whether you have reached a usage limit. We cannot tell whether answers are slow or poor, only whether the service responds. Microsoft Copilot, Grok and DeepSeek publish no status feed we can read, so those verdicts rely on our own checks and say so on the page. Google publishes no feed for the Gemini app itself, so for Gemini we read Google Cloud’s incident list for Gemini and Vertex AI and combine it with our own checks.</p>
 <h2>Data for developers</h2>
 <p>The same data is available as JSON at <a href="/api/status.json">/api/status.json</a>, with one service per file at <code>/api/chatgpt.json</code> and so on. It is free for reasonable use and may be rate limited if it is abused.</p>`,
   },
@@ -45,7 +46,7 @@ export const GUIDES = [
 <h1>What to do when an AI chatbot stops working</h1>
 <p class="lede">Most “outages” turn out to be one of a handful of ordinary problems. Work down this list before you give up on the afternoon.</p>
 <h2>1. Find out if it is everyone or just you</h2>
-<p>Check the service on <a href="/">our status page</a> and on the provider’s own status page. If either reports a problem, you can stop troubleshooting and wait. Providers usually post the cause within the first half hour and update as they fix it.</p>
+<p>Check the service on <a href="/">our status page</a> and on the provider’s own status page. If either reports a problem, you can stop troubleshooting and wait. Providers normally update their status page as they investigate and fix it.</p>
 <h2>2. Try a different route in</h2>
 <p>If the website is failing, try the mobile app, or the other way round. Try another browser, a private window, or a different network such as mobile data in place of Wi-Fi. A fault that disappears on another route tells you where the problem sits.</p>
 <h2>3. Remove the usual suspects</h2>
@@ -55,7 +56,7 @@ export const GUIDES = [
 <h2>5. Do not hammer it</h2>
 <p>Repeatedly resubmitting a long request during an outage can leave you with duplicates and, on some plans, use up your allowance. Copy your prompt somewhere safe, wait a few minutes, then retry once.</p>
 <h2>6. Keep a fallback</h2>
-<p>If you depend on one assistant for work, keep a second one signed in. Most of the major services failed on different days, so a spare is a cheap piece of insurance. For anything urgent, have a plan that does not need an AI at all.</p>
+<p>If you depend on one assistant for work, keep a second one signed in. Services tend to fail at different times, so a spare is a cheap piece of insurance. For anything urgent, have a plan that does not need an AI at all.</p>
 <p>If you have been through all of this and the provider reports nothing, read <a href="/guides/status-page-says-up-but-broken">why a service can be up but broken for you</a>.</p>`,
   },
   {
@@ -131,7 +132,8 @@ export function privacyPage(env) {
     'Privacy policy | Is AI Down?',
     'What data Is AI Down? collects, who processes it and your rights.',
     `<h1>Privacy policy</h1>
-<p>This policy explains what happens to your data when you use this website. It is run by ${operator(env)} (“we”).</p>
+<p class="muted">Last updated: 7 October 2026</p>
+<p>This policy explains what happens to your data when you use this website. It is run by ${operator(env)} (“we”), ${esc(ADDRESS)}.</p>
 <h2>What we collect</h2>
 <p>We do not ask you to create an account or give us any personal details, and we do not set our own cookies. Like any website, our hosting provider, Cloudflare, processes technical information about each request, such as your IP address, browser type and the page requested, in order to deliver the site, keep it secure and measure load. We do not use this to identify you.</p>
 <h2>Advertising</h2>
@@ -150,6 +152,7 @@ export function termsPage(env) {
     'Terms of use | Is AI Down?',
     'The terms for using Is AI Down? and its JSON data.',
     `<h1>Terms of use</h1>
+<p class="muted">Last updated: 7 October 2026</p>
 <p>By using this website you agree to these terms. It is run by ${operator(env)}.</p>
 <h2>Information only</h2>
 <p>The statuses shown here are produced automatically from providers’ public status information and our own tests. They can be wrong, late or incomplete, and they are provided as is, without any promise of accuracy or availability. Do not rely on them for decisions where an error could cause harm or loss. Always check the provider’s own status page for anything important.</p>
@@ -175,7 +178,8 @@ export function contactPage(env) {
     'How to contact Is AI Down? about a wrong verdict, a missing service or anything else.',
     `<h1>Contact</h1>
 <p>Found a verdict that looks wrong, or want a service added? We would like to hear about it. Please include the service name and roughly when you saw the problem.</p>
-${mail}`,
+${mail}
+<p>Post: ${operator(env)}, ${esc(ADDRESS)}</p>`,
   );
 }
 
