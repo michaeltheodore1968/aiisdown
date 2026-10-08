@@ -45,6 +45,19 @@ test('platform page: structured data parses and answers first', () => {
   assert.deepEqual(blocks.map((b) => b['@type']), ['WebPage', 'BreadcrumbList', 'FAQPage']);
 });
 
+test('platform page: says so when the provider reports problems we do not count', () => {
+  const p = BY_SLUG.claude;
+  const feed = { ok: true, state: 'operational', issues: [], excluded: [{ name: 'Claude Console (platform.claude.com)', status: 'degraded' }] };
+  const html = platformPage(env, p, state('operational', { feed, probes: [{ label: 'claude.ai', core: true, ok: true, ms: 46, note: 'reachable' }] }), { incidents: [], events: [] }, now);
+  assert.match(html, /reports no problems with the parts of Claude we count\./);
+  assert.match(html, /problems with Claude Console \(platform\.claude\.com\) \(degraded\), which we do not count towards this verdict/);
+  assert.match(html, /Claude looks up/);
+  // Nothing extra when there is nothing to report.
+  const clean = platformPage(env, p, state('operational', { feed: { ok: true, state: 'operational', issues: [], excluded: [] }, probes: [] }), { incidents: [], events: [] }, now);
+  assert.match(clean, /reports no problems\./);
+  assert.equal(clean.includes('do not count'), false);
+});
+
 test('platform page: feed-supplied text is HTML-escaped everywhere', () => {
   const evil = '<img src=x onerror=alert(1)>';
   const p = BY_SLUG.claude;

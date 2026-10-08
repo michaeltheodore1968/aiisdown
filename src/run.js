@@ -65,7 +65,7 @@ export async function runChecks(env, now = Date.now(), fetchImpl = fetch) {
       probes,
       feed: feed
         ? feed.ok
-          ? { ok: true, state: feed.state, issues: feed.issues, description: feed.description }
+          ? { ok: true, state: feed.state, issues: feed.issues, excluded: feed.excluded || [], description: feed.description }
           : { ok: false, error: feed.error }
         : null,
     };

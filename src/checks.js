@@ -81,6 +81,14 @@ export function parseStatuspage(cfg, json) {
     .filter((c) => (COMPONENT_RANK[c.status] ?? 0) > 0)
     .map((c) => ({ name: c.name, status: COMPONENT_LABEL[c.status] || c.status }));
 
+  // Components the provider lists but we do not count towards the verdict
+  // (because of `include`), kept so the page can say so rather than hide them.
+  const excluded = include
+    ? all
+        .filter((c) => !include.has(c.name) && (COMPONENT_RANK[c.status] ?? 0) > 0)
+        .map((c) => ({ name: c.name, status: COMPONENT_LABEL[c.status] || c.status }))
+    : [];
+
   let state;
   if (scoped.length === 0) {
     // Nothing matched: fall back to the page-wide indicator.
@@ -117,7 +125,7 @@ export function parseStatuspage(cfg, json) {
   const live = incidents.some((i) => !i.info && i.status !== 'monitoring' && i.impact !== 'none');
   if (state === 'operational' && live) state = 'degraded';
 
-  return { state, issues, incidents, description: json.status?.description || '' };
+  return { state, issues, excluded, incidents, description: json.status?.description || '' };
 }
 
 // Google Cloud's incident list; we keep only open incidents that mention Gemini

@@ -116,8 +116,18 @@ const uptimeText = (days) => {
 
 // ------------------------------------------------------------ the words
 
+// Components the provider reports on but we deliberately do not count.
+const MAX_NAMED = 4;
+const excludedText = (ex) => {
+  const shown = ex.slice(0, MAX_NAMED).map((i) => `${i.name} (${i.status})`);
+  const more = ex.length - shown.length;
+  return ` It does report problems with ${joinNames(shown)}${more > 0 ? ` and ${more} more` : ''}, which we do not count towards this verdict.`;
+};
+
 export function signals(p, s) {
   const d = s?.data || {};
+  const ex = d.feed?.ok ? d.feed.excluded || [] : [];
+  const exText = ex.length ? excludedText(ex) : '';
   let feedLine;
   if (!p.feed) {
     feedLine = p.feedNote || `${p.vendor} publishes no status feed we can read.`;
@@ -126,11 +136,13 @@ export function signals(p, s) {
   } else if (!d.feed.ok) {
     feedLine = `${p.vendor}'s status page could not be read just now (${d.feed.error}), so this verdict leans on our own checks.`;
   } else if (d.feed.state === 'operational') {
-    feedLine = `${p.vendor}'s status page reports no problems${p.feedNote ? '. ' + p.feedNote : '.'}`;
+    feedLine = ex.length
+      ? `${p.vendor}'s status page reports no problems with the parts of ${p.name} we count.${exText}`
+      : `${p.vendor}'s status page reports no problems${p.feedNote ? '. ' + p.feedNote : '.'}`;
   } else if (d.feed.issues?.length) {
-    feedLine = `${p.vendor}'s status page reports problems with ${joinNames(d.feed.issues.map((i) => `${i.name} (${i.status})`))}.`;
+    feedLine = `${p.vendor}'s status page reports problems with ${joinNames(d.feed.issues.map((i) => `${i.name} (${i.status})`))}.${exText}`;
   } else {
-    feedLine = `${p.vendor}'s status page reports an incident${d.feed.description ? `: ${d.feed.description}` : ''}.`;
+    feedLine = `${p.vendor}'s status page reports an incident${d.feed.description ? `: ${d.feed.description}` : ''}.${exText}`;
   }
 
   let probeLine;

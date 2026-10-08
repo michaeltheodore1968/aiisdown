@@ -94,6 +94,8 @@ test('statuspage: a Claude Console problem does not turn Claude amber', () => {
   assert.equal(r.state, 'operational');
   assert.deepEqual(r.issues, []);
   assert.equal(r.incidents.length, 0);
+  // It is still reported, as a component we do not count.
+  assert.deepEqual(r.excluded, [{ name: consoleName, status: 'degraded' }]);
 });
 
 test('gcp: only open Gemini or Vertex AI incidents count', () => {
