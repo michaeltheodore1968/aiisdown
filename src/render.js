@@ -1,6 +1,7 @@
 import { PLATFORMS, pagePath } from './platforms.js';
 import { esc, utcTime, utcDateTime, relTime, duration, joinNames } from './util.js';
 import { slotSeries, daySeries, uptime } from './state.js';
+import { ABOUT, WRITTEN_ON } from './about.js';
 
 export const STATUS = {
   operational: { label: 'Operational', icon: '✓', cls: 'ok' },
@@ -283,6 +284,24 @@ ${faq.map(([q, a]) => `<details><summary>${esc(q)}</summary><p>${esc(a)}</p></de
 
 // -------------------------------------------------------- platform page
 
+// The longer, service-specific write-up from about.js (empty if a service has none).
+function aboutSection(p) {
+  const a = ABOUT[p.slug];
+  if (!a) return '';
+  const pair = ([k, v]) => `<li><strong>${esc(k)}</strong>: ${esc(v)}</li>`;
+  return `<section class="prose about">
+<h2>How ${esc(p.name)} can fail</h2>
+${a.intro.map((t) => `<p>${esc(t)}</p>`).join('\n')}
+${a.parts?.length ? `<ul class="plain">${a.parts.map(pair).join('')}</ul>` : ''}
+${a.errors?.length ? `<h2>${esc(a.errorsTitle || 'API errors and what they mean')}</h2>
+<p>${esc(a.errorsIntro || '')}</p>
+<ul class="plain">${a.errors.map(pair).join('')}</ul>` : ''}
+<p class="muted">Written from the sources below on ${esc(WRITTEN_ON)}. Providers change their documentation, so check it for anything important.</p>
+<h3>Sources</h3>
+<ul class="plain">${a.sources.map(([label, url]) => `<li><a href="${esc(url)}" rel="noopener">${esc(label)}</a></li>`).join('')}</ul>
+</section>`;
+}
+
 const IMPACT = { none: 'No impact', minor: 'Minor', major: 'Major', critical: 'Critical', low: 'Low', medium: 'Medium', high: 'High' };
 
 export function platformPage(env, p, s, extra, now) {
@@ -321,6 +340,7 @@ export function platformPage(env, p, s, extra, now) {
     ],
     [`Where is the official ${p.name} status page?`, `${p.vendor} publishes status information at ${p.statusPage}.`],
     ['How often is this page updated?', 'Our checks run every five minutes, so this page can lag a sudden outage by up to five minutes.'],
+    ...(ABOUT[p.slug]?.faq || []),
   ];
 
   const body = `
@@ -356,6 +376,7 @@ ${
 <h2>Changes we have observed</h2>
 ${events ? `<ul class="timeline">${events}</ul>` : `<p>We have not seen ${esc(p.name)} change status since we started watching.</p>`}
 </section>
+${aboutSection(p)}
 <section class="prose">
 <h2>If ${esc(p.name)} is not working for you</h2>
 <p>Check the two signals above first. When both look healthy, try a different device or network, sign out and back in, and switch off any VPN or browser extensions. Hitting a usage limit can look like an outage, so check for a message about limits. Our guide has the <a href="/guides/ai-chatbot-not-working">full checklist</a>, and another explains <a href="/guides/status-page-says-up-but-broken">why a service can be up but broken for you</a>.</p>

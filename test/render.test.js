@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { PLATFORMS, BY_SLUG } from '../src/platforms.js';
 import { homePage, platformPage, apiStatus, adUnit } from '../src/render.js';
+import { ABOUT } from '../src/about.js';
 import { guidePage, GUIDES, aboutPage, contactPage, faqPage } from '../src/content.js';
 
 const env = { SITE_URL: 'https://aiisdown.com', ADSENSE_CLIENT: '', ADSENSE_SLOT_TOP: '', ADSENSE_SLOT_INLINE: '', CONTACT_EMAIL: '', OPERATOR_NAME: '' };
@@ -56,6 +57,29 @@ test('platform page: says so when the provider reports problems we do not count'
   const clean = platformPage(env, p, state('operational', { feed: { ok: true, state: 'operational', issues: [], excluded: [] }, probes: [] }), { incidents: [], events: [] }, now);
   assert.match(clean, /reports no problems\./);
   assert.equal(clean.includes('do not count'), false);
+});
+
+test('every service has its own written content, with sources and no em dashes', () => {
+  const clean = (s) => !/[—–]/.test(s);
+  const seen = new Set();
+  for (const p of PLATFORMS) {
+    const a = ABOUT[p.slug];
+    assert.ok(a, `${p.slug} has no written content`);
+    assert.ok(a.intro.length >= 1 && a.sources.length >= 1, p.slug);
+    for (const [, url] of a.sources) assert.match(url, /^https:\/\//, `${p.slug} source`);
+    for (const t of [...a.intro, ...(a.parts || []).flat(), ...(a.errors || []).flat(), ...(a.faq || []).flat(), a.errorsIntro || '']) assert.ok(clean(t), `${p.slug}: dash in "${t.slice(0, 40)}"`);
+    // Nothing is shared between services: each intro and each extra question is its own.
+    for (const t of [...a.intro, ...(a.faq || []).map((f) => f[0])]) {
+      assert.equal(seen.has(t), false, `${p.slug}: repeated text "${t.slice(0, 40)}"`);
+      seen.add(t);
+    }
+    const html = platformPage(env, p, state('operational', {}), { incidents: [], events: [] }, now);
+    assert.ok(html.includes(`How ${p.name} can fail`), p.slug);
+    assert.ok(html.includes('rel="noopener">'), p.slug);
+    const blocks = [...html.matchAll(/<script type="application\/ld\+json">(.*?)<\/script>/gs)].map((m) => JSON.parse(m[1]));
+    const faq = blocks.find((b) => b['@type'] === 'FAQPage');
+    assert.equal(faq.mainEntity.length, 4 + (a.faq || []).length, p.slug);
+  }
 });
 
 test('platform page: feed-supplied text is HTML-escaped everywhere', () => {
