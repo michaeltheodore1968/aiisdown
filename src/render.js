@@ -17,7 +17,7 @@ const jsonLd = (obj) => `<script type="application/ld+json">${JSON.stringify(obj
 
 export function adUnit(env, slot) {
   if (!env.ADSENSE_CLIENT || !slot) return '';
-  return `<aside class="ad" aria-label="Advertisement"><span class="ad-label">Advertisement</span><ins class="adsbygoogle" style="display:block" data-ad-client="${esc(env.ADSENSE_CLIENT)}" data-ad-slot="${esc(slot)}" data-ad-format="auto" data-full-width-responsive="true"></ins><script>(adsbygoogle=window.adsbygoogle||[]).push({});</script></aside>`;
+  return `<aside class="ad" aria-label="Advertisements"><span class="ad-label">Advertisements</span><ins class="adsbygoogle" style="display:block" data-ad-client="${esc(env.ADSENSE_CLIENT)}" data-ad-slot="${esc(slot)}" data-ad-format="auto" data-full-width-responsive="true"></ins><script>(adsbygoogle=window.adsbygoogle||[]).push({});</script></aside>`;
 }
 
 export function layout(env, { title, description, path, body, ld = [], noindex = false }) {

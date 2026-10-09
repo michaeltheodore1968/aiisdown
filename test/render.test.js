@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { PLATFORMS, BY_SLUG } from '../src/platforms.js';
 import { homePage, platformPage, apiStatus, adUnit } from '../src/render.js';
 import { ABOUT } from '../src/about.js';
-import { guidePage, GUIDES, aboutPage, contactPage, faqPage } from '../src/content.js';
+import { guidePage, GUIDES, aboutPage, contactPage, faqPage, privacyPage } from '../src/content.js';
 
 const env = { SITE_URL: 'https://aiisdown.com', ADSENSE_CLIENT: '', ADSENSE_SLOT_TOP: '', ADSENSE_SLOT_INLINE: '', CONTACT_EMAIL: '', OPERATOR_NAME: '' };
 const now = Date.UTC(2026, 9, 6, 12, 0, 0);
@@ -110,7 +110,17 @@ test('api: shape and unknown services', () => {
 test('ads render only when configured', () => {
   assert.equal(adUnit(env, 'abc'), '');
   assert.match(adUnit({ ...env, ADSENSE_CLIENT: 'ca-pub-1' }, '123'), /data-ad-slot="123"/);
+  // Google only allows the labels "Advertisements" or "Sponsored Links".
+  assert.match(adUnit({ ...env, ADSENSE_CLIENT: 'ca-pub-1' }, '123'), /class="ad-label">Advertisements</);
   assert.equal(adUnit({ ...env, ADSENSE_CLIENT: 'ca-pub-1' }, ''), '');
+});
+
+test('privacy policy: discloses ad-serving cookies, web beacons and Cloudflare Web Analytics', () => {
+  const html = privacyPage(env);
+  assert.match(html, /web beacons or IP addresses/);
+  assert.match(html, /Cloudflare Web Analytics/);
+  assert.match(html, /Last updated: 9 October 2026/);
+  assert.equal(html.includes('—'), false);
 });
 
 test('faq page: questions, structured data and no em dashes', () => {

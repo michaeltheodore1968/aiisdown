@@ -121,7 +121,7 @@ details { border-bottom: 1px solid var(--line); padding: 10px 0; }
 summary { cursor: pointer; font-weight: 700; }
 details p { margin: 8px 0 0; color: var(--muted); }
 
-.ad { margin: 16px 0; text-align: center; min-height: 100px; }
+.ad { margin: 28px 0; text-align: center; min-height: 100px; }
 .ad-label { display: block; font-size: 0.7rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); margin-bottom: 2px; }
 
 .site-footer { border-top: 1px solid var(--line); background: var(--surface); padding: 24px 0 40px; color: var(--muted); font-size: 0.88rem; }

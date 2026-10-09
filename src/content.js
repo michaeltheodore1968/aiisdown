@@ -158,7 +158,7 @@ const FAQS = () => [
   ],
   [
     'Do you collect my personal data?',
-    'We do not ask for accounts or personal details and we do not set our own cookies. Our hosting provider processes technical information about each request, and advertising partners may use cookies once ads are shown. The <a href="/privacy">privacy policy</a> has the detail.',
+    'We do not ask for accounts or personal details and we do not set our own cookies. Our hosting provider processes technical information about each request, we use Cloudflare Web Analytics to count page views, and advertising partners may use cookies once ads are shown. The <a href="/privacy">privacy policy</a> has the detail.',
   ],
 ];
 
@@ -206,12 +206,13 @@ export function privacyPage(env) {
     'Privacy policy | Is AI Down?',
     'What data Is AI Down? collects, who processes it and your rights.',
     `<h1>Privacy policy</h1>
-<p class="muted">Last updated: 7 October 2026</p>
+<p class="muted">Last updated: 9 October 2026</p>
 <p>This policy explains what happens to your data when you use this website. It is run by ${operator(env)} (“we”), ${esc(ADDRESS)}.</p>
 <h2>What we collect</h2>
 <p>We do not ask you to create an account or give us any personal details, and we do not set our own cookies. Like any website, our hosting provider, Cloudflare, processes technical information about each request, such as your IP address, browser type and the page requested, in order to deliver the site, keep it secure and measure load. We do not use this to identify you.</p>
+<p>We also use Cloudflare Web Analytics, which counts page views and measures how quickly pages load by means of a small script. Cloudflare states that it does not use cookies or local storage to collect these measurements.</p>
 <h2>Advertising</h2>
-<p>This site is funded by advertising supplied by Google AdSense. Google and its partners may use cookies and similar technologies to show and measure ads and, where you consent, to personalise them. In the UK and European Economic Area you will be asked for your consent before personalised advertising is used. You can learn how Google uses data from sites that use its services at <a href="https://policies.google.com/technologies/partner-sites" rel="noopener">policies.google.com/technologies/partner-sites</a> and manage ad personalisation at <a href="https://adssettings.google.com" rel="noopener">adssettings.google.com</a>.</p>
+<p>This site is funded by advertising supplied by Google AdSense. Google and its partners may use cookies and similar technologies to show and measure ads and, where you consent, to personalise them. Third parties, including Google, may place and read cookies on your browser, or use web beacons or IP addresses, to collect information as a result of ads being served on this website. In the UK and European Economic Area you will be asked for your consent before personalised advertising is used. You can learn how Google uses data from sites that use its services at <a href="https://policies.google.com/technologies/partner-sites" rel="noopener">policies.google.com/technologies/partner-sites</a> and manage ad personalisation at <a href="https://adssettings.google.com" rel="noopener">adssettings.google.com</a>.</p>
 <h2>Your rights</h2>
 <p>Under UK data protection law you have rights over personal data held about you, including access, correction and erasure, and you may complain to the Information Commissioner’s Office at <a href="https://ico.org.uk" rel="noopener">ico.org.uk</a>. Because we hold no account data, most requests will concern the technical logs processed by our hosting and advertising providers, and you may need to contact them directly. For anything else, use the <a href="/contact">contact page</a>.</p>
 <h2>Changes</h2>
