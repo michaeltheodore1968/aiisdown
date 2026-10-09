@@ -15,6 +15,35 @@ const st = (s) => STATUS[s] || STATUS.unknown;
 
 const jsonLd = (obj) => `<script type="application/ld+json">${JSON.stringify(obj).replace(/</g, '\\u003c')}</script>`;
 
+// Who is behind the site, for search engines and AI answer engines. Facts here are the ones the footer already shows.
+export const orgId = (env) => `${env.SITE_URL.replace(/\/$/, '')}/#organization`;
+export const orgLd = (env) => {
+  const site = env.SITE_URL.replace(/\/$/, '');
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'Organization',
+    '@id': orgId(env),
+    name: 'Is AI Down?',
+    url: `${site}/`,
+    logo: `${site}/logo-mark-512.png`,
+    description: 'An independent website that shows live status for the main AI services, checked every five minutes.',
+    ...(env.CONTACT_EMAIL ? { email: env.CONTACT_EMAIL } : {}),
+    telephone: '+447936855867',
+    parentOrganization: {
+      '@type': 'Organization',
+      name: 'Citeable',
+      address: {
+        '@type': 'PostalAddress',
+        streetAddress: 'The Packhouse, Broadwater Farm, Broadwater Road',
+        addressLocality: 'West Malling',
+        addressRegion: 'Kent',
+        postalCode: 'ME19 6HT',
+        addressCountry: 'GB',
+      },
+    },
+  };
+};
+
 export function adUnit(env, slot) {
   if (!env.ADSENSE_CLIENT || !slot) return '';
   return `<aside class="ad" aria-label="Advertisements"><span class="ad-label">Advertisements</span><ins class="adsbygoogle" style="display:block" data-ad-client="${esc(env.ADSENSE_CLIENT)}" data-ad-slot="${esc(slot)}" data-ad-format="auto" data-full-width-responsive="true"></ins><script>(adsbygoogle=window.adsbygoogle||[]).push({});</script></aside>`;
@@ -272,7 +301,9 @@ ${faq.map(([q, a]) => `<details><summary>${esc(q)}</summary><p>${esc(a)}</p></de
         name: 'Is AI Down?',
         url: env.SITE_URL,
         description: 'Live status of the main AI services, checked every five minutes.',
+        publisher: { '@id': orgId(env) },
       },
+      orgLd(env),
       {
         '@context': 'https://schema.org',
         '@type': 'FAQPage',
@@ -303,6 +334,12 @@ ${a.errors?.length ? `<h2>${esc(a.errorsTitle || 'API errors and what they mean'
 }
 
 const IMPACT = { none: 'No impact', minor: 'Minor', major: 'Major', critical: 'Critical', low: 'Low', medium: 'Medium', high: 'High' };
+
+// Search results cut titles at about 60 characters, so the longest service names get the short form.
+const serviceTitle = (p) => {
+  const full = `Is ${p.name} down right now? Live ${p.name} status`;
+  return full.length <= 60 ? full : `Is ${p.name} down? Live status right now`;
+};
 
 export function platformPage(env, p, s, extra, now) {
   const d = s?.data || {};
@@ -391,7 +428,7 @@ ${faq.map(([q, a]) => `<details><summary>${esc(q)}</summary><p>${esc(a)}</p></de
 </section>`;
 
   return layout(env, {
-    title: `Is ${p.name} down right now? Live ${p.name} status`,
+    title: serviceTitle(p),
     description: `Is ${p.name} down? Right now it is ${shortVerdict(s)}. Live status from ${p.vendor}'s status page plus our own checks, updated every five minutes.`,
     path: pagePath(p.slug),
     body,

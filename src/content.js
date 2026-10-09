@@ -1,4 +1,4 @@
-import { layout } from './render.js';
+import { layout, orgLd, orgId } from './render.js';
 import { esc } from './util.js';
 import { PLATFORMS, pagePath } from './platforms.js';
 
@@ -199,6 +199,7 @@ ${sourcesBlock([
   {
     id: 'ai-api-down-developer-checklist',
     title: 'When an AI API you depend on goes down: a checklist for developers',
+    seoTitle: 'AI API outage checklist for developers',
     description:
       'Practical steps for apps that call AI APIs: which errors to retry, how to back off, how to handle long requests, and why to keep a fallback.',
     html: () => `
@@ -275,7 +276,10 @@ export function guidesIndex(env) {
 export function guidePage(env, id) {
   const g = GUIDES.find((x) => x.id === id);
   if (!g) return null;
-  return page(env, `/guides/${g.id}`, `${g.title} | Is AI Down?`, g.description, g.html(), {
+  // Titles over about 60 characters get cut in search results: use the short form, or drop the site name.
+  const base = g.seoTitle || g.title;
+  const withSite = `${base} | Is AI Down?`;
+  return page(env, `/guides/${g.id}`, withSite.length <= 60 ? withSite : base, g.description, g.html(), {
     ld: [
       {
         '@context': 'https://schema.org',
@@ -367,13 +371,26 @@ export function aboutPage(env) {
   return page(
     env,
     '/about',
-    'About Is AI Down?',
+    'About Is AI Down? Who runs it and how it works',
     'What Is AI Down? is, how it works, and how to contact us.',
     `<h1>About Is AI Down?</h1>
 <p>Is AI Down? is a small, independent website that tells you whether the main AI services are working. It currently covers ${PLATFORMS.map((p) => esc(p.name)).join(', ')}.</p>
 <p>Every five minutes we read each provider’s own status page, where one is available, and test whether the service answers. The page for each service shows both signals side by side, so you can see why we are saying what we say. The full method is in <a href="/guides/how-we-check">how we check</a>.</p>
 <p>The site is run by ${operator(env)}. It is funded by advertising, which never changes a verdict. We are not affiliated with any of the companies we cover.</p>
 <p>Spotted a wrong verdict, or want another service added? Tell us through the <a href="/contact">contact page</a>.</p>`,
+    {
+      ld: [
+        {
+          '@context': 'https://schema.org',
+          '@type': 'AboutPage',
+          name: 'About Is AI Down?',
+          url: `${env.SITE_URL}/about`,
+          inLanguage: 'en-GB',
+          about: { '@id': orgId(env) },
+        },
+        orgLd(env),
+      ],
+    },
   );
 }
 
@@ -427,7 +444,7 @@ export function contactPage(env) {
   return page(
     env,
     '/contact',
-    'Contact | Is AI Down?',
+    'Contact Is AI Down? Report a wrong verdict',
     'How to contact Is AI Down? about a wrong verdict, a missing service or anything else.',
     `<h1>Contact</h1>
 <p>Found a verdict that looks wrong, or want a service added? We would like to hear about it. Please include the service name and roughly when you saw the problem.</p>

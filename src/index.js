@@ -50,8 +50,20 @@ function json(obj, status = 200) {
   });
 }
 
-function sitemap(env) {
+// Pages built from live checks change every five minutes, so their lastmod is the latest check. Static pages carry none.
+async function lastCheck(env) {
+  try {
+    const row = await env.DB.prepare('SELECT MAX(checked_at) AS t FROM platform_state').first();
+    return row?.t ? new Date(row.t).toISOString().slice(0, 10) : null;
+  } catch {
+    return null;
+  }
+}
+
+async function sitemap(env) {
   const site = env.SITE_URL.replace(/\/$/, '');
+  const live = await lastCheck(env);
+  const liveSet = new Set(['/', ...PLATFORMS.map((p) => pagePath(p.slug))]);
   const paths = [
     '/',
     ...PLATFORMS.map((p) => pagePath(p.slug)),
@@ -63,7 +75,7 @@ function sitemap(env) {
     '/terms',
     '/contact',
   ];
-  const xml = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${paths.map((p) => `<url><loc>${site}${p}</loc></url>`).join('\n')}\n</urlset>\n`;
+  const xml = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${paths.map((p) => `<url><loc>${site}${p}</loc>${live && liveSet.has(p) ? `<lastmod>${live}</lastmod>` : ''}</url>`).join('\n')}\n</urlset>\n`;
   return new Response(xml, { headers: { 'content-type': 'application/xml; charset=utf-8', 'cache-control': 'public, max-age=3600' } });
 }
 
@@ -77,7 +89,7 @@ async function route(request, env, ctx) {
   const extra = url.host === canonicalHost ? {} : { 'x-robots-tag': 'noindex' };
   const now = Date.now();
 
-  if (path === '/sitemap.xml') return sitemap(env);
+  if (path === '/sitemap.xml') return await sitemap(env);
 
   let m;
   if (path === '/' || (m = path.match(/^\/is-([a-z-]+)-down$/)) || (m = path.match(/^\/api\/([a-z-]+)\.json$/))) {
