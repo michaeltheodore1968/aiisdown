@@ -14,6 +14,12 @@ const page = (env, path, title, description, html, extra = {}) =>
 const operator = (env) => (env.OPERATOR_NAME ? esc(env.OPERATOR_NAME) : 'the operator of this website');
 const ADDRESS = 'The Packhouse, Broadwater Farm, Broadwater Road, West Malling, Kent, ME19 6HT';
 
+// A "Sources" block for guides that rest on provider documentation.
+const sourcesBlock = (list) =>
+  `<h2>Sources</h2>
+<p class="muted">Read on 8 October 2026. Providers change their documentation, so check it for anything important.</p>
+<ul>${list.map(([label, url]) => `<li><a href="${url}" rel="noopener">${label}</a></li>`).join('')}</ul>`;
+
 export const GUIDES = [
   {
     id: 'how-we-check',
@@ -80,6 +86,178 @@ export const GUIDES = [
 <h2>Demand is the problem</h2>
 <p>At busy times a service can be technically up but so loaded that requests time out or queue. Providers do not always class that as an outage, although it feels like one.</p>
 <p>To test which case you are in, follow the steps in <a href="/guides/ai-chatbot-not-working">what to do when an AI chatbot stops working</a>.</p>`,
+  },
+  {
+    id: 'how-to-read-an-ai-status-page',
+    title: 'How to read an AI status page',
+    description:
+      'What the labels on an AI provider’s status page mean, why one part can be down while the rest works, and what a status page cannot tell you.',
+    html: () => `
+<h1>How to read an AI status page</h1>
+<p class="lede">Almost every AI provider has an official status page. The labels on it are precise, and the difference between them is easy to miss when something is not working.</p>
+<h2>It is a list of parts, not one light</h2>
+<p>A status page does not show a single “up” or “down”. It lists components, and each has its own state. A provider’s page might list its chat website, its developer API, a coding tool and a developer console as separate lines. One can be struggling while the others work normally, so the first thing to read is which component is affected. Our <a href="/is-chatgpt-down">ChatGPT</a> and <a href="/is-claude-down">Claude</a> pages show how the same idea applies to two real services.</p>
+<h2>What the component labels mean</h2>
+<p>Many providers use the same status-page software, which uses a small set of labels for each component:</p>
+<ul>
+<li><strong>Operational.</strong> Nothing is reported.</li>
+<li><strong>Degraded performance.</strong> It works but is slower or less reliable than usual.</li>
+<li><strong>Partial outage.</strong> Some users, regions or features are affected.</li>
+<li><strong>Major outage.</strong> The component is largely unavailable.</li>
+<li><strong>Under maintenance.</strong> The provider has planned the downtime.</li>
+</ul>
+<h2>How an incident moves along</h2>
+<p>Providers commonly describe an incident in stages, such as investigating, identified, monitoring and resolved. “Identified” means the cause is known and a fix is under way. “Monitoring” means a fix has gone in and the provider is watching to see whether it holds, so errors can briefly come back. Read the latest update text, not just the headline. It often says what is and is not affected, for example that a developer console is slow while the chat product is unaffected.</p>
+<h2>What a status page cannot tell you</h2>
+<ul>
+<li><strong>It can lag.</strong> A page is updated by people, so the first minutes of a real fault may show green.</li>
+<li><strong>It describes the provider, not you.</strong> It cannot see your account, your plan, your usage limits, your region or your network.</li>
+<li><strong>It rarely measures slowness.</strong> A service can be technically up and still painfully slow.</li>
+<li><strong>Some providers publish nothing readable.</strong> For those, an independent check is the only signal available.</li>
+</ul>
+<h2>How we use them</h2>
+<p>We read each provider’s own page where a script can, and combine it with a test of our own. Our <a href="/guides/how-we-check">method guide</a> explains which components decide “down” for each service, and each service page names any component we deliberately do not count.</p>
+<p>If the page says everything is fine and you still cannot get in, read <a href="/guides/status-page-says-up-but-broken">why a service can be up but broken for you</a>.</p>
+${sourcesBlock([
+  ['Anthropic status page', 'https://status.claude.com'],
+  ['OpenAI status page', 'https://status.openai.com'],
+])}`,
+  },
+  {
+    id: 'ai-error-codes-explained',
+    title: 'AI error codes explained: 401, 403, 429, 500, 503 and 529',
+    description:
+      'What the common AI API error codes mean according to OpenAI, Anthropic, Google, DeepSeek, Mistral and others, and which ones point to an outage.',
+    html: () => `
+<h1>AI error codes explained: 401, 403, 429, 500, 503 and 529</h1>
+<p class="lede">An error number on its own does not tell you whether the provider is down. Some mean something is wrong with your request or account. Others point at the service. This guide uses what the providers themselves document.</p>
+<h2>The rule of thumb</h2>
+<p>In general, codes in the 400s mean the request was refused because of something on your side, such as a bad key, no credit or too many requests. Codes in the 500s mean a problem on the provider’s side. The providers’ own advice follows that split: do not retry most 400s, because the same request will fail again, and retry 500s after a wait.</p>
+<h2>The codes that are about you</h2>
+<ul>
+<li><strong>401.</strong> Authentication failed. OpenAI lists a wrong or outdated key, not belonging to an organisation, and a request from an address that is not on your allowlist. Anthropic describes a malformed, revoked or expired key. xAI and DeepSeek describe a missing or wrong key.</li>
+<li><strong>402.</strong> A billing problem. Anthropic documents a payment problem. DeepSeek documents it as insufficient balance, meaning your account has run out of funds.</li>
+<li><strong>403.</strong> Permission refused. OpenAI uses it when a country, region or territory is not supported. Anthropic and xAI use it when a key lacks permission for the resource.</li>
+<li><strong>400 and 422.</strong> The request itself is wrong or failed validation. Fix the request, then try again.</li>
+</ul>
+<h2>429 is not one thing</h2>
+<p>A 429 means “too many”, but the reason varies. OpenAI documents several different 429 errors: a rate limit reached, credit used up, an organisation or project spend limit reached, a usage quota, and a separate “slow down” signal after traffic grew too fast. Anthropic documents a rate limit or a monthly spend cap, and says a spend-cap 429 carries no retry delay and keeps failing until access resumes. Google calls its version RESOURCE_EXHAUSTED and links it to rate limits or quotas. In every case the documented causes are limits on your account or traffic, not a fault with the service.</p>
+<h2>The codes that point at the service</h2>
+<ul>
+<li><strong>500.</strong> An unexpected problem on the provider’s side. OpenAI and Anthropic both suggest retrying after a wait. OpenAI adds that you should check its status page if the error persists.</li>
+<li><strong>502, 503 and 504.</strong> Mistral lists these as a bad response upstream, a service that is down or overloaded, and a timeout. All are worth retrying with a delay.</li>
+<li><strong>503 on its own.</strong> OpenAI describes the model as temporarily overloaded. DeepSeek describes the server as overloaded by demand. Google describes the service as temporarily unreachable or overloaded.</li>
+<li><strong>529.</strong> Anthropic’s code for an overloaded API. Anthropic says it can happen when traffic is high across all users.</li>
+<li><strong>504 and 408.</strong> A timeout. Anthropic suggests streaming responses for long requests.</li>
+</ul>
+<h2>What to do with this</h2>
+<p>If you see 401, 402, 403, 400 or 422, check your key, billing and request first. If you see a 429, look at your limits and slow down. If you see 500, 503, 504 or 529, check the provider’s status page and ours, and retry after a pause. The next guide, <a href="/guides/outage-or-rate-limit">outage or rate limit?</a>, takes you through telling the difference.</p>
+${sourcesBlock([
+  ['OpenAI API error codes', 'https://developers.openai.com/api/docs/guides/error-codes'],
+  ['Claude API errors', 'https://platform.claude.com/docs/en/api/errors'],
+  ['Gemini API troubleshooting guide', 'https://ai.google.dev/gemini-api/docs/troubleshooting'],
+  ['DeepSeek API error codes', 'https://api-docs.deepseek.com/quick_start/error_codes/'],
+  ['Mistral error glossary', 'https://docs.mistral.ai/resources/error-glossary'],
+  ['xAI API debugging guide', 'https://docs.x.ai/docs/key-information/debugging'],
+])}`,
+  },
+  {
+    id: 'outage-or-rate-limit',
+    title: 'Outage or rate limit? How to tell the difference',
+    description:
+      'A short way to work out whether an AI service is down for everyone or you have hit a limit, using the error you see and the provider’s status page.',
+    html: () => `
+<h1>Outage or rate limit? How to tell the difference</h1>
+<p class="lede">They look alike from the outside: the answer does not arrive. But one is a problem on the provider’s side and the other is a limit on your account. The fix is different.</p>
+<h2>Start with the message</h2>
+<ul>
+<li><strong>A message about limits, usage, credit or billing</strong> points to your account. Providers document limits as rate limits, spend caps and used-up credit. Nothing is broken.</li>
+<li><strong>A message about being overloaded, unavailable or timed out</strong> points to the service. Providers describe these as temporary and suggest retrying after a wait.</li>
+<li><strong>A bare error number.</strong> Use <a href="/guides/ai-error-codes-explained">the guide to error codes</a> to see which side it belongs to. As a rule, 429 is about limits and 500, 503 and 529 are about the service.</li>
+</ul>
+<h2>Then check whether it is everyone</h2>
+<ol>
+<li>Open the provider’s status page and ours. If either reports a problem with the part you are using, you can stop and wait.</li>
+<li>If both look healthy, try another route in: the other app or the website, a different browser, a different network.</li>
+<li>If you use an API, try a different key, project or model if you have one. A fault that follows your account is probably a limit. A fault that follows the model is probably the service.</li>
+</ol>
+<h2>Why this is not always clear-cut</h2>
+<p>Some limits are sensitive to how fast you ramp up. Anthropic notes that a sharp rise in an organisation’s usage can bring 429 errors because of what it calls acceleration limits, and advises increasing traffic gradually. OpenAI documents a “slow down” response for the same reason. So a 429 can follow a sudden jump in your own traffic, and a mix of 429s and 5xx errors does not by itself prove which problem you are seeing.</p>
+<h2>What not to do</h2>
+<ul>
+<li><strong>Do not hammer it.</strong> Perplexity’s documentation warns that aggressive retry loops without delays make throttling worse. Waiting longer between tries is the standard advice.</li>
+<li><strong>Do not keep retrying errors about your request or your account.</strong> A wrong key or an empty balance will fail every time.</li>
+</ul>
+<h2>When it really is the provider</h2>
+<p>If the provider reports the problem, there is little to do but wait and have a fallback. Our <a href="/guides/ai-api-down-developer-checklist">checklist for developers</a> covers how to build that in. For everyday users, <a href="/guides/ai-chatbot-not-working">what to do when an AI chatbot stops working</a> has the practical steps.</p>
+${sourcesBlock([
+  ['OpenAI API error codes', 'https://developers.openai.com/api/docs/guides/error-codes'],
+  ['Claude API errors', 'https://platform.claude.com/docs/en/api/errors'],
+  ['Perplexity SDK error handling', 'https://docs.perplexity.ai/guides/perplexity-sdk-error-handling'],
+])}`,
+  },
+  {
+    id: 'ai-api-down-developer-checklist',
+    title: 'When an AI API you depend on goes down: a checklist for developers',
+    description:
+      'Practical steps for apps that call AI APIs: which errors to retry, how to back off, how to handle long requests, and why to keep a fallback.',
+    html: () => `
+<h1>When an AI API you depend on goes down: a checklist for developers</h1>
+<p class="lede">If your product calls an AI API, that API will have bad days. These steps come from what the providers themselves recommend.</p>
+<h2>1. Only retry what can succeed</h2>
+<p>Google’s troubleshooting guide separates errors worth retrying (429, 408 and the 5xx errors) from errors about the request (400, 402 and 403), which will fail again. Perplexity says the same: do not retry 4xx errors, and retry 5xx errors with backoff. Retrying a bad key or an empty balance only adds noise.</p>
+<h2>2. Back off, and add jitter</h2>
+<p>Wait longer after each failure, and add a random element so many clients do not retry in step. Google and Perplexity both recommend exponential backoff with jitter. Anthropic’s SDK retries transient failures twice by default, with exponential backoff, and respects a retry-after header when there is one. OpenAI tells you to follow its retry headers.</p>
+<h2>3. Know which 429 you have</h2>
+<p>A rate limit will clear if you slow down. A spend cap or used-up credit will not clear until you change your account. Anthropic notes that a spend-cap 429 has no retry delay and keeps failing until access resumes, so a retry loop on it is wasted effort. See <a href="/guides/ai-error-codes-explained">the error-codes guide</a>.</p>
+<h2>4. Handle long requests properly</h2>
+<p>Anthropic advises streaming, or its batch interface, for long requests, because some networks drop idle connections and a long wait without a response can fail without any answer coming back. It also suggests keeping a TCP keep-alive on direct integrations.</p>
+<h2>5. Log the request ID</h2>
+<p>Anthropic returns a request ID on every response and asks you to include it when contacting support. Keeping the IDs of failed calls saves time later. Other providers have equivalents, so check their documentation.</p>
+<h2>6. Keep a fallback</h2>
+<p>Perplexity’s documentation recommends graceful degradation with fallbacks. DeepSeek’s error page suggests, for the rate-limit error, temporarily using another provider’s API. At minimum, decide in advance what your product shows when the AI is unavailable, such as a clear message instead of a spinner that never ends.</p>
+<h2>7. Check before you debug</h2>
+<p>Before spending an hour on your own code, look at the provider’s status page and ours. If the provider reports a problem with the API, you can stop. Our <a href="/api/status.json">JSON feed</a> gives the current verdict for each service, free for reasonable use. Remember that our verdict follows the consumer products for some services, and the API can fail separately.</p>
+${sourcesBlock([
+  ['Gemini API troubleshooting guide', 'https://ai.google.dev/gemini-api/docs/troubleshooting'],
+  ['Perplexity SDK error handling', 'https://docs.perplexity.ai/guides/perplexity-sdk-error-handling'],
+  ['Claude API errors', 'https://platform.claude.com/docs/en/api/errors'],
+  ['OpenAI API error codes', 'https://developers.openai.com/api/docs/guides/error-codes'],
+  ['DeepSeek API error codes', 'https://api-docs.deepseek.com/quick_start/error_codes/'],
+])}`,
+  },
+  {
+    id: 'ai-tools-fail-on-work-networks',
+    title: 'Why AI tools fail on work networks',
+    description:
+      'Why Cursor, GitHub Copilot and Microsoft Copilot can break on a company network while working at home, and what your IT team can check.',
+    html: () => `
+<h1>Why AI tools fail on work networks</h1>
+<p class="lede">If an AI tool works at home but fails at the office, the provider is probably fine. Company networks add proxies, firewalls and certificate checks, and these can interfere with tools that stream responses.</p>
+<h2>Proxies and HTTP/2</h2>
+<p>Cursor streams responses over HTTP/2, and its documentation says some corporate proxies, such as Zscaler, block it. The suggested fix is to switch Cursor’s HTTP compatibility mode to HTTP/1.1 in its network settings and restart. Cursor also has built-in network diagnostics in its settings that check its connection to its servers.</p>
+<h2>Proxy settings and certificates</h2>
+<p>GitHub’s documentation on Copilot network errors describes timeouts and connection resets that come from a proxy blocking the connection, and certificate errors such as “unable to verify the first certificate”. These appear when a proxy inspects encrypted traffic with a certificate your machine does not recognise. GitHub says Copilot does not support proxy addresses that begin with https://, and needs basic or Kerberos authentication where one is required. It suggests testing your connection with curl and asking your IT team to configure the proxy or install the certificate properly.</p>
+<h2>Firewalls and allowlists</h2>
+<p>Where a firewall blocks outbound traffic, the tool’s domains need to be allowed. Cursor lists cursor.sh, cursor-cdn.com, cursorapi.com and cursorvm.com, including subdomains. GitHub’s documentation has a separate page on firewall settings for Copilot.</p>
+<h2>VPNs</h2>
+<ul>
+<li>Cursor says a VPN can trigger a “suspicious activity” block. Turning the VPN off, starting a fresh chat or signing in another way can help.</li>
+<li>After you disconnect from a VPN, Cursor suggests fully restarting it, not just reloading the window, so old DNS settings are cleared.</li>
+<li>GitHub lists VPNs and firewalls among the things that can stop Copilot reaching its servers.</li>
+</ul>
+<h2>Remote and SSH sessions</h2>
+<p>Cursor’s documentation notes that AI requests go from your own machine to Cursor, not from the remote host. When working over SSH, your local internet connection is what matters.</p>
+<h2>Copilot at work is a different product</h2>
+<p>Microsoft’s troubleshooting article for Copilot in Microsoft 365 apps lists causes unrelated to outages: a newly assigned licence that has not taken effect, being signed in with both a personal and a work account, device-based licensing, the wrong update channel, and privacy settings that block connected experiences. Our <a href="/is-copilot-down">Microsoft Copilot page</a> covers the consumer app, not this one.</p>
+<h2>How to tell it is your network</h2>
+<p>If our page and the provider’s status page both look healthy, try the same tool on mobile data or a home connection. If it works there, take the details above to your IT team. If it fails everywhere, read <a href="/guides/ai-chatbot-not-working">what to do when an AI chatbot stops working</a>.</p>
+${sourcesBlock([
+  ['Cursor network troubleshooting', 'https://cursor.com/help/troubleshooting/network'],
+  ['Cursor common issues', 'https://cursor.com/docs/troubleshooting/common-issues'],
+  ['GitHub Docs: troubleshooting network errors for Copilot', 'https://docs.github.com/en/copilot/how-tos/troubleshoot-copilot/troubleshoot-network-errors'],
+  ['Microsoft Learn: Copilot is missing, disabled, or does not work correctly (Microsoft 365)', 'https://learn.microsoft.com/en-us/office/troubleshoot/copilot/copilot-missing-disabled-not-work-correctly'],
+])}`,
   },
 ];
 

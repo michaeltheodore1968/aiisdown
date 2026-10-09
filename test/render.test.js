@@ -115,6 +115,22 @@ test('ads render only when configured', () => {
   assert.equal(adUnit({ ...env, ADSENSE_CLIENT: 'ca-pub-1' }, ''), '');
 });
 
+test('every guide has a title, a description and no broken internal links', () => {
+  const ids = new Set(GUIDES.map((g) => g.id));
+  assert.ok(GUIDES.length >= 8);
+  for (const g of GUIDES) {
+    assert.ok(g.title && g.description, g.id);
+    const html = g.html();
+    for (const m of html.matchAll(/href="\/guides\/([a-z-]+)"/g)) assert.ok(ids.has(m[1]), `${g.id} links to a missing guide: ${m[1]}`);
+    for (const m of html.matchAll(/href="(https?:[^"]+)"/g)) assert.match(m[1], /^https:\/\//, `${g.id}: non-https link`);
+    assert.equal(/[—–]/.test(html), false, `${g.id}: dash`);
+  }
+  // Guides that rest on provider documentation say where it came from.
+  for (const id of ['ai-error-codes-explained', 'outage-or-rate-limit', 'ai-api-down-developer-checklist', 'ai-tools-fail-on-work-networks', 'how-to-read-an-ai-status-page']) {
+    assert.match(GUIDES.find((g) => g.id === id).html(), /<h2>Sources<\/h2>/, id);
+  }
+});
+
 test('privacy policy: discloses ad-serving cookies, web beacons and Cloudflare Web Analytics', () => {
   const html = privacyPage(env);
   assert.match(html, /web beacons or IP addresses/);
