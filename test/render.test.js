@@ -159,3 +159,30 @@ test('static pages build and use no em dashes', () => {
   assert.match(contactPage({ ...env, CONTACT_EMAIL: 'a@b.co' }), /mailto:a@b\.co/);
   assert.match(aboutPage(env), /the operator of this website/);
 });
+
+test('titles stay within about 60 characters where the content allows', () => {
+  for (const p of PLATFORMS) {
+    const title = platformPage(env, p, state('operational'), { incidents: [], events: [] }, now).match(/<title>(.*?)<\/title>/)[1];
+    assert.ok(title.length <= 60, `${p.slug}: ${title.length} characters`);
+    assert.match(title, new RegExp(`Is ${p.name.replace(/[()]/g, '\\$&')} down`));
+  }
+  for (const g of GUIDES) {
+    const title = guidePage(env, g.id).match(/<title>(.*?)<\/title>/)[1];
+    assert.ok(title.length <= 60, `${g.id}: ${title.length} characters`);
+  }
+  assert.match(aboutPage(env), /<title>About Is AI Down\? Who runs it/);
+  assert.match(contactPage(env), /<title>Contact Is AI Down\? Report a wrong verdict/);
+});
+
+test('home and about pages say who is behind the site', () => {
+  const blocks = (html) => [...html.matchAll(/<script type="application\/ld\+json">(.*?)<\/script>/gs)].map((m) => JSON.parse(m[1]));
+  const home = blocks(homePage(env, {}, now));
+  assert.deepEqual(home.map((b) => b['@type']), ['WebSite', 'Organization', 'FAQPage']);
+  assert.deepEqual(blocks(aboutPage(env)).map((b) => b['@type']), ['AboutPage', 'Organization']);
+  const org = home.find((b) => b['@type'] === 'Organization');
+  assert.equal(org['@id'], 'https://aiisdown.com/#organization');
+  assert.equal(home[0].publisher['@id'], org['@id']);
+  assert.equal(org.logo, 'https://aiisdown.com/logo-mark-512.png');
+  assert.equal(org.parentOrganization.name, 'Citeable');
+  assert.equal(org.parentOrganization.address.postalCode, 'ME19 6HT');
+});
