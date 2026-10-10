@@ -80,7 +80,7 @@ export const GUIDES = [
 <h2>It is specific to your account or plan</h2>
 <p>Usage limits, a lapsed payment, a flagged account or a feature that has not reached your plan can all produce errors that nobody else sees. These never appear on a status page.</p>
 <h2>It is specific to your region or network</h2>
-<p>Traffic is routed through different data centres in different places. A fault in one region, or a block applied by your employer, school or internet provider, can leave you cut off while the rest of the world carries on.</p>
+<p>Traffic is routed through different data centres in different places. A fault in one region, or a block applied by your employer, school or internet provider, can leave you cut off while the rest of the world carries on. Our guide to <a href="/guides/ai-service-blocked-region-or-network">regional and network blocks</a> shows how to tell which it is.</p>
 <h2>Your browser is in the way</h2>
 <p>Extensions, stale cookies, a VPN, or a bot-protection check that keeps failing can make a working site look dead. A private window on a different network settles it quickly.</p>
 <h2>Demand is the problem</h2>
@@ -258,6 +258,46 @@ ${sourcesBlock([
   ['Cursor common issues', 'https://cursor.com/docs/troubleshooting/common-issues'],
   ['GitHub Docs: troubleshooting network errors for Copilot', 'https://docs.github.com/en/copilot/how-tos/troubleshoot-copilot/troubleshoot-network-errors'],
   ['Microsoft Learn: Copilot is missing, disabled, or does not work correctly (Microsoft 365)', 'https://learn.microsoft.com/en-us/office/troubleshoot/copilot/copilot-missing-disabled-not-work-correctly'],
+])}`,
+  },
+  {
+    id: 'ai-service-blocked-region-or-network',
+    title: 'AI service up but not loading? Is it a regional or network block?',
+    seoTitle: 'AI up but not loading? Network or region block',
+    description:
+      'Our status says an AI service is up but you cannot get in. How to tell a network or regional problem from an outage, and what a VPN can and cannot show.',
+    html: () => `
+<h1>AI service up but not loading? Is it a regional or network block?</h1>
+<p class="lede">When our page and the provider’s page both say a service is working and it still will not load for you, the cause is often somewhere between you and the service. This guide helps you find where.</p>
+<h2>What our check can and cannot see</h2>
+<p>Our test runs from Cloudflare’s network, in one place. It can tell you whether the service answers there and what the provider reports. It cannot tell you whether the service is reachable from your country, your internet provider or your office. “Operational” on our page means “reachable and healthy from where we check”, not “working for you”.</p>
+<h2>1. Change one thing: the network</h2>
+<p>Try the same service on a different connection, such as mobile data in place of home Wi-Fi, with nothing else changed.</p>
+<ul>
+<li><strong>It works on the other network.</strong> The problem is the first network: a filter on a work, school or public connection, your router, or your internet provider. Our guide on <a href="/guides/ai-tools-fail-on-work-networks">why AI tools fail on work networks</a> lists what an IT team can check.</li>
+<li><strong>It fails on every network.</strong> The cause is more likely your account, a usage limit, your browser, or the service not being available where you are. Work through <a href="/guides/ai-chatbot-not-working">what to do when an AI chatbot stops working</a>.</li>
+</ul>
+<h2>2. Is the service available in your country?</h2>
+<p>Providers do not offer every service everywhere. OpenAI’s documentation, for example, says its API returns a 403 error when the country, region or territory is not supported. If you are travelling, or you recently moved, check the provider’s own list of supported countries before assuming a fault.</p>
+<h2>3. Could it be a regional incident?</h2>
+<p>Traffic goes through different data centres in different places, and a provider’s status page can report a partial outage that affects only some users or regions. Read the latest incident text on the provider’s page and on <a href="/">our service pages</a>, which name the affected components. If an incident is listed, wait for the update.</p>
+<h2>4. Where a VPN fits</h2>
+<p>A VPN sends your traffic through a server in another place, so a website sees that location in place of yours. For troubleshooting, that makes it a test, not a cure. If a service loads over a VPN and not without one, the problem is probably on your usual network or with your internet provider, not with the service. If it fails both ways, you have ruled that out.</p>
+<p>A few cautions:</p>
+<ul>
+<li><strong>Do not use a VPN to get round a country restriction.</strong> If a provider does not offer its service in your country, using a VPN to get in may break its terms. Check them first.</li>
+<li><strong>A VPN can be the cause.</strong> Cursor’s documentation says a VPN can trigger a “suspicious activity” block, and GitHub lists VPNs among the things that can stop Copilot reaching its servers. If it only fails while a VPN is on, switch the VPN off.</li>
+<li><strong>A VPN adds a company that sees where your traffic goes.</strong> Read its privacy policy, and be wary of free services.</li>
+<li><strong>Do not bypass a work or school network</strong> without permission from whoever runs it.</li>
+</ul>
+<p>We do not recommend a particular VPN here.</p>
+<h2>5. What to tell support or your IT team</h2>
+<p>Write down the exact error message, the time (with your time zone), which network you were on, what worked on another network, and whether our page and the provider’s page showed a problem. That saves them a round of questions.</p>
+<p>Still stuck? Read <a href="/guides/status-page-says-up-but-broken">why a service can be up but broken for you</a>.</p>
+${sourcesBlock([
+  ['OpenAI API error codes', 'https://developers.openai.com/api/docs/guides/error-codes'],
+  ['Cursor network troubleshooting', 'https://cursor.com/help/troubleshooting/network'],
+  ['GitHub Docs: troubleshooting network errors for Copilot', 'https://docs.github.com/en/copilot/how-tos/troubleshoot-copilot/troubleshoot-network-errors'],
 ])}`,
   },
 ];

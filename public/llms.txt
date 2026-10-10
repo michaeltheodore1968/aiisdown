@@ -27,6 +27,7 @@
 - [Outage or rate limit?](https://aiisdown.com/guides/outage-or-rate-limit)
 - [Checklist for developers when an AI API is down](https://aiisdown.com/guides/ai-api-down-developer-checklist)
 - [Why AI tools fail on work networks](https://aiisdown.com/guides/ai-tools-fail-on-work-networks)
+- [AI service up but not loading? Regional or network block](https://aiisdown.com/guides/ai-service-blocked-region-or-network)
 - [How we check](https://aiisdown.com/guides/how-we-check): exactly what is measured and what it cannot tell you
 - [JSON, all services](https://aiisdown.com/api/status.json)
 - [JSON, one service](https://aiisdown.com/api/chatgpt.json): replace the name with any service slug
