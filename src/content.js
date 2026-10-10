@@ -290,7 +290,6 @@ ${sourcesBlock([
 <li><strong>A VPN adds a company that sees where your traffic goes.</strong> Read its privacy policy, and be wary of free services.</li>
 <li><strong>Do not bypass a work or school network</strong> without permission from whoever runs it.</li>
 </ul>
-<p>We do not recommend a particular VPN here.</p>
 <h2>5. What to tell support or your IT team</h2>
 <p>Write down the exact error message, the time (with your time zone), which network you were on, what worked on another network, and whether our page and the provider’s page showed a problem. That saves them a round of questions.</p>
 <p>Still stuck? Read <a href="/guides/status-page-says-up-but-broken">why a service can be up but broken for you</a>.</p>
