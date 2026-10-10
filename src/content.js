@@ -283,14 +283,24 @@ ${sourcesBlock([
 <p>Traffic goes through different data centres in different places, and a provider’s status page can report a partial outage that affects only some users or regions. Read the latest incident text on the provider’s page and on <a href="/">our service pages</a>, which name the affected components. If an incident is listed, wait for the update.</p>
 <h2>4. Where a VPN fits</h2>
 <p>A VPN sends your traffic through a server in another place, so a website sees that location in place of yours. For troubleshooting, that makes it a test, not a cure. If a service loads over a VPN and not without one, the problem is probably on your usual network or with your internet provider, not with the service. If it fails both ways, you have ruled that out.</p>
-<p>A few cautions:</p>
+<h2>5. When a VPN is worth having</h2>
+<p>Beyond troubleshooting, a VPN is a sensible tool in some everyday situations:</p>
+<ul>
+<li><strong>On public Wi-Fi.</strong> In a café, hotel or airport, a VPN encrypts the connection between your device and the VPN’s server, so others on the same network cannot see what you are doing. Most websites already use HTTPS, which protects the content of what you send, so the gain is smaller than some advertising suggests, but it is a useful extra layer on a network you do not trust.</li>
+<li><strong>Working remotely.</strong> Many employers provide a VPN so staff can reach internal systems securely from home or abroad. If yours does, use it as instructed.</li>
+<li><strong>Keeping your browsing from your internet provider.</strong> A VPN hides which sites you visit from your internet provider and from the local network. It does not make you invisible: the VPN company can see that information in their place, so you are choosing whom to trust.</li>
+<li><strong>Travelling.</strong> Some people use a VPN abroad to reach services as they would at home. Check the service’s terms first, because some do not allow it.</li>
+<li><strong>Where access is restricted by the authorities.</strong> In places where sites are blocked, a VPN can be an important way to reach information. Local law and the risks to the person using it vary a great deal, so it is worth understanding both.</li>
+</ul>
+<p>Used for a clear reason and from a provider you have checked, a VPN can be well worth the small cost.</p>
+<h2>6. Cautions before you use one</h2>
 <ul>
 <li><strong>Do not use a VPN to get round a country restriction.</strong> If a provider does not offer its service in your country, using a VPN to get in may break its terms. Check them first.</li>
 <li><strong>A VPN can be the cause.</strong> Cursor’s documentation says a VPN can trigger a “suspicious activity” block, and GitHub lists VPNs among the things that can stop Copilot reaching its servers. If it only fails while a VPN is on, switch the VPN off.</li>
 <li><strong>A VPN adds a company that sees where your traffic goes.</strong> Read its privacy policy, and be wary of free services.</li>
 <li><strong>Do not bypass a work or school network</strong> without permission from whoever runs it.</li>
 </ul>
-<h2>5. What to tell support or your IT team</h2>
+<h2>7. What to tell support or your IT team</h2>
 <p>Write down the exact error message, the time (with your time zone), which network you were on, what worked on another network, and whether our page and the provider’s page showed a problem. That saves them a round of questions.</p>
 <p>Still stuck? Read <a href="/guides/status-page-says-up-but-broken">why a service can be up but broken for you</a>.</p>
 ${sourcesBlock([
