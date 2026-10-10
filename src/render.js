@@ -28,19 +28,7 @@ export const orgLd = (env) => {
     logo: `${site}/logo-mark-512.png`,
     description: 'An independent website that shows live status for the main AI services, checked every five minutes.',
     ...(env.CONTACT_EMAIL ? { email: env.CONTACT_EMAIL } : {}),
-    telephone: '+447936855867',
-    parentOrganization: {
-      '@type': 'Organization',
-      name: 'Citeable',
-      address: {
-        '@type': 'PostalAddress',
-        streetAddress: 'The Packhouse, Broadwater Farm, Broadwater Road',
-        addressLocality: 'West Malling',
-        addressRegion: 'Kent',
-        postalCode: 'ME19 6HT',
-        addressCountry: 'GB',
-      },
-    },
+    telephone: '+447557868086',
   };
 };
 
@@ -89,7 +77,7 @@ ${ads}
 ${body}
 </main>
 <footer class="site-footer"><div class="wrap">
-<p>Is AI Down? is part of the Citeable group.<br>Citeable, The Packhouse, Broadwater Farm, Broadwater Road, West Malling, Kent, ME19 6HT<br><a href="tel:+447936855867">07936 855867</a></p>
+<p>Is AI Down? is run by ${esc(env.OPERATOR_NAME || 'its operator')}.${env.OPERATOR_ADDRESS ? `<br>${esc(env.OPERATOR_ADDRESS)}` : ''}<br><a href="tel:+447557868086">07557 868086</a></p>
 <p>Is AI Down? is an independent service. It is not affiliated with, or endorsed by, OpenAI, Anthropic, Google, Microsoft, Perplexity, xAI, DeepSeek, Mistral, GitHub or Anysphere. Product names belong to their owners.</p>
 <nav aria-label="Footer"><a href="/about">About</a><a href="/guides">Guides</a><a href="/faq">FAQ</a><a href="/privacy">Privacy</a><a href="/terms">Terms</a><a href="/contact">Contact</a><a href="/api/status.json">JSON API</a></nav>
 </div></footer>

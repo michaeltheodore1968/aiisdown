@@ -12,7 +12,7 @@ const page = (env, path, title, description, html, extra = {}) =>
   });
 
 const operator = (env) => (env.OPERATOR_NAME ? esc(env.OPERATOR_NAME) : 'the operator of this website');
-const ADDRESS = 'The Packhouse, Broadwater Farm, Broadwater Road, West Malling, Kent, ME19 6HT';
+const address = (env) => (env.OPERATOR_ADDRESS ? esc(env.OPERATOR_ADDRESS) : '');
 
 // A "Sources" block for guides that rest on provider documentation.
 const sourcesBlock = (list) =>
@@ -401,8 +401,8 @@ export function privacyPage(env) {
     'Privacy policy | Is AI Down?',
     'What data Is AI Down? collects, who processes it and your rights.',
     `<h1>Privacy policy</h1>
-<p class="muted">Last updated: 9 October 2026</p>
-<p>This policy explains what happens to your data when you use this website. It is run by ${operator(env)} (“we”), ${esc(ADDRESS)}.</p>
+<p class="muted">Last updated: 10 October 2026</p>
+<p>This policy explains what happens to your data when you use this website. It is run by ${operator(env)} (“we”)${address(env) ? `, ${address(env)}` : ''}.</p>
 <h2>What we collect</h2>
 <p>We do not ask you to create an account or give us any personal details, and we do not set our own cookies. Like any website, our hosting provider, Cloudflare, processes technical information about each request, such as your IP address, browser type and the page requested, in order to deliver the site, keep it secure and measure load. We do not use this to identify you.</p>
 <p>We also use Cloudflare Web Analytics, which counts page views and measures how quickly pages load by means of a small script. Cloudflare states that it does not use cookies or local storage to collect these measurements.</p>
@@ -449,7 +449,7 @@ export function contactPage(env) {
     `<h1>Contact</h1>
 <p>Found a verdict that looks wrong, or want a service added? We would like to hear about it. Please include the service name and roughly when you saw the problem.</p>
 ${mail}
-<p>Post: ${operator(env)}, ${esc(ADDRESS)}</p>`,
+${address(env) ? `<p>Post: ${operator(env)}, ${address(env)}</p>` : ''}`,
   );
 }
 

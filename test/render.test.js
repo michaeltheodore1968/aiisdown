@@ -183,6 +183,5 @@ test('home and about pages say who is behind the site', () => {
   assert.equal(org['@id'], 'https://aiisdown.com/#organization');
   assert.equal(home[0].publisher['@id'], org['@id']);
   assert.equal(org.logo, 'https://aiisdown.com/logo-mark-512.png');
-  assert.equal(org.parentOrganization.name, 'Citeable');
-  assert.equal(org.parentOrganization.address.postalCode, 'ME19 6HT');
+  assert.equal(org.parentOrganization, undefined);
 });
