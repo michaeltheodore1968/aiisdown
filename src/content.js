@@ -402,7 +402,7 @@ export function privacyPage(env) {
     'What data Is AI Down? collects, who processes it and your rights.',
     `<h1>Privacy policy</h1>
 <p class="muted">Last updated: 10 October 2026</p>
-<p>This policy explains what happens to your data when you use this website. It is run by ${operator(env)} (“we”)${address(env) ? `, ${address(env)}` : ''}.</p>
+<p>This website is run by Michael Theodore, trading as Is AI Down? You can reach us at hello@aiisdown.com.</p>
 <h2>What we collect</h2>
 <p>We do not ask you to create an account or give us any personal details, and we do not set our own cookies. Like any website, our hosting provider, Cloudflare, processes technical information about each request, such as your IP address, browser type and the page requested, in order to deliver the site, keep it secure and measure load. We do not use this to identify you.</p>
 <p>We also use Cloudflare Web Analytics, which counts page views and measures how quickly pages load by means of a small script. Cloudflare states that it does not use cookies or local storage to collect these measurements.</p>

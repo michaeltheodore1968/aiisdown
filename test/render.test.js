@@ -136,6 +136,9 @@ test('privacy policy: discloses ad-serving cookies, web beacons and Cloudflare W
   assert.match(html, /web beacons or IP addresses/);
   assert.match(html, /Cloudflare Web Analytics/);
   assert.match(html, /Last updated: 10 October 2026/);
+  assert.match(html, /This website is run by Michael Theodore, trading as Is AI Down\?/);
+  assert.equal(html.includes('Packhouse'), false);
+  assert.equal(html.includes('Gaynor'), false);
   assert.equal(html.includes('—'), false);
 });
 
