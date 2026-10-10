@@ -1,4 +1,5 @@
 import { PLATFORMS, BY_SLUG, pagePath } from './platforms.js';
+import { HISTORY_LIMIT } from './util.js';
 import { runChecks } from './run.js';
 import { homePage, platformPage, apiStatus, apiService } from './render.js';
 import { GUIDES, guidesIndex, guidePage, faqPage, aboutPage, privacyPage, termsPage, contactPage, notFoundPage } from './content.js';
@@ -24,12 +25,12 @@ async function loadStates(env) {
 async function loadExtras(env, slug) {
   const [inc, ev] = await Promise.all([
     env.DB.prepare(
-      'SELECT title, impact, started_at, updated_at, resolved_at FROM incidents WHERE slug = ?1 ORDER BY (resolved_at IS NULL) DESC, started_at DESC LIMIT 8',
+      'SELECT title, impact, started_at, updated_at, resolved_at FROM incidents WHERE slug = ?1 ORDER BY (resolved_at IS NULL) DESC, started_at DESC LIMIT ?2',
     )
-      .bind(slug)
+      .bind(slug, HISTORY_LIMIT)
       .all(),
-    env.DB.prepare('SELECT from_status, to_status, at, summary FROM events WHERE slug = ?1 ORDER BY at DESC LIMIT 8')
-      .bind(slug)
+    env.DB.prepare('SELECT from_status, to_status, at, summary FROM events WHERE slug = ?1 ORDER BY at DESC LIMIT ?2')
+      .bind(slug, HISTORY_LIMIT)
       .all(),
   ]);
   return { incidents: inc.results, events: ev.results };

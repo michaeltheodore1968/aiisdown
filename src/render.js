@@ -1,5 +1,5 @@
 import { PLATFORMS, pagePath } from './platforms.js';
-import { esc, utcTime, utcDateTime, relTime, duration, joinNames } from './util.js';
+import { esc, utcTime, utcDateTime, relTime, duration, joinNames, dayLabel, HISTORY_LIMIT } from './util.js';
 import { slotSeries, daySeries, uptime } from './state.js';
 import { ABOUT, WRITTEN_ON } from './about.js';
 
@@ -131,6 +131,19 @@ const uptimeText = (days) => {
   const n = Object.values(days || {}).filter(([, t]) => t > 0).length;
   return `${u}% operational, ${n < 30 ? `last ${n} days` : '30 days'}`;
 };
+
+// Says how far back the incident and change lists can go, so the page never implies more history than we hold.
+function historyNote(p, days, shown) {
+  const seen = Object.entries(days || {})
+    .filter(([, [, total]]) => total > 0)
+    .map(([k]) => k)
+    .sort();
+  const missed = 'An incident that opened and closed between two of our five-minute checks may not appear.';
+  const capped = shown >= HISTORY_LIMIT ? ` Only the latest ${HISTORY_LIMIT} of each are listed.` : '';
+  if (!seen.length) return `We have not recorded any history for ${p.name} yet.`;
+  if (seen.length < 30) return `We began watching ${p.name} on ${dayLabel(seen[0])}, so nothing earlier appears here. ${missed}${capped}`;
+  return `Resolved incidents and status changes are kept for 90 days. ${missed}${capped}`;
+}
 
 // ------------------------------------------------------------ the words
 
@@ -392,13 +405,14 @@ ${bars30(d.days)}
 </section>
 ${adUnit(env, env.ADSENSE_SLOT_INLINE)}
 <section class="prose">
-<h2>Recent incidents</h2>
+<h2>Outage and incident history</h2>
+<p class="muted">${esc(historyNote(p, d.days, Math.max((extra.incidents || []).length, (extra.events || []).length)))}</p>
 ${
   incidents
     ? `${p.feed?.incidents === 'info' ? `<p class="muted">${esc(p.vendor)}’s status page covers more than ${esc(p.name)}, so some of these may not affect it.</p>` : ''}<ul class="timeline">${incidents}</ul>`
     : `<p>No incidents have been reported on ${esc(p.vendor)}’s status page since we started watching.</p>`
 }
-<h2>Changes we have observed</h2>
+<h2>Status changes we have observed</h2>
 ${events ? `<ul class="timeline">${events}</ul>` : `<p>We have not seen ${esc(p.name)} change status since we started watching.</p>`}
 </section>
 ${aboutSection(p)}

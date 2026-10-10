@@ -12,6 +12,15 @@ export function utcDateTime(ms) {
   return `${d.getUTCDate()} ${MONTHS[d.getUTCMonth()]} ${utcTime(ms)}`;
 }
 
+// How many incidents and status changes a service page lists.
+export const HISTORY_LIMIT = 30;
+
+// '2026-10-07' as '7 Oct 2026'.
+export function dayLabel(key) {
+  const d = new Date(`${key}T00:00:00Z`);
+  return `${d.getUTCDate()} ${MONTHS[d.getUTCMonth()]} ${d.getUTCFullYear()}`;
+}
+
 export function dayKey(ms) {
   return new Date(ms).toISOString().slice(0, 10);
 }
