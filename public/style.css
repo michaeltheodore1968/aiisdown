@@ -53,6 +53,8 @@ a:focus-visible, summary:focus-visible { outline: 3px solid var(--accent); outli
 .site-header .wrap { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 60px; flex-wrap: wrap; }
 .brand { display: inline-flex; align-items: center; gap: 10px; font-weight: 800; font-size: 1.15rem; color: var(--text); text-decoration: none; letter-spacing: -0.01em; }
 .brand-mark { display: block; width: 32px; height: 32px; border-radius: 9px; }
+.brand-domain { font-weight: 400; font-size: 0.85rem; color: var(--muted); letter-spacing: 0; }
+@media (max-width: 560px) { .brand-domain { display: none; } }
 .site-header nav { display: flex; gap: 18px; }
 .site-header nav a { color: var(--muted); text-decoration: none; font-weight: 600; font-size: 0.95rem; }
 .site-header nav a:hover { color: var(--text); }

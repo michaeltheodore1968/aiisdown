@@ -374,7 +374,7 @@ export function aboutPage(env) {
     'About Is AI Down? Who runs it and how it works',
     'What Is AI Down? is, how it works, and how to contact us.',
     `<h1>About Is AI Down?</h1>
-<p>Is AI Down? is a small, independent website that tells you whether the main AI services are working. It currently covers ${PLATFORMS.map((p) => esc(p.name)).join(', ')}.</p>
+<p>Is AI Down? (aiisdown.com) is a small, independent website that tells you whether the main AI services are working. It currently covers ${PLATFORMS.map((p) => esc(p.name)).join(', ')}.</p>
 <p>Every five minutes we read each provider’s own status page, where one is available, and test whether the service answers. The page for each service shows both signals side by side, so you can see why we are saying what we say. The full method is in <a href="/guides/how-we-check">how we check</a>.</p>
 <p>The site is run by ${operator(env)}. It is funded by advertising, which never changes a verdict. We are not affiliated with any of the companies we cover.</p>
 <p>Spotted a wrong verdict, or want another service added? Tell us through the <a href="/contact">contact page</a>.</p>`,

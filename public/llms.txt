@@ -1,4 +1,4 @@
-# Is AI Down?
+# Is AI Down? (aiisdown.com)
 
 > Live status of the main AI services (ChatGPT, Claude, Gemini, Perplexity, Microsoft Copilot, Grok, DeepSeek, Mistral Le Chat, GitHub Copilot and Cursor). Each service is checked every five minutes by combining the provider's own status page with an independent reachability test.
 
