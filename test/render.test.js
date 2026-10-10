@@ -135,7 +135,7 @@ test('privacy policy: discloses ad-serving cookies, web beacons and Cloudflare W
   const html = privacyPage(env);
   assert.match(html, /web beacons or IP addresses/);
   assert.match(html, /Cloudflare Web Analytics/);
-  assert.match(html, /Last updated: 9 October 2026/);
+  assert.match(html, /Last updated: 10 October 2026/);
   assert.equal(html.includes('—'), false);
 });
 
