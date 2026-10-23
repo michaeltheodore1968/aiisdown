@@ -15,9 +15,9 @@ const operator = (env) => (env.OPERATOR_NAME ? esc(env.OPERATOR_NAME) : 'the ope
 const address = (env) => (env.OPERATOR_ADDRESS ? esc(env.OPERATOR_ADDRESS) : '');
 
 // A "Sources" block for guides that rest on provider documentation.
-const sourcesBlock = (list) =>
+const sourcesBlock = (list, readOn = '8 October 2026') =>
   `<h2>Sources</h2>
-<p class="muted">Read on 8 October 2026. Providers change their documentation, so check it for anything important.</p>
+<p class="muted">Read on ${readOn}. Providers change their documentation, so check it for anything important.</p>
 <ul>${list.map(([label, url]) => `<li><a href="${url}" rel="noopener">${label}</a></li>`).join('')}</ul>`;
 
 export const GUIDES = [
@@ -308,6 +308,48 @@ ${sourcesBlock([
   ['Cursor network troubleshooting', 'https://cursor.com/help/troubleshooting/network'],
   ['GitHub Docs: troubleshooting network errors for Copilot', 'https://docs.github.com/en/copilot/how-tos/troubleshoot-copilot/troubleshoot-network-errors'],
 ])}`,
+  },
+  {
+    id: 'status-page-lists-incident-service-works',
+    title: 'Why a status page lists an incident while the service works',
+    description:
+      'Real examples from our own records of provider status pages listing incidents that did not affect the service people use, and one where the label undersold a real outage.',
+    html: () => `
+<h1>Why a status page lists an incident while the service works</h1>
+<p class="lede">You open an AI provider’s status page and find an incident, yet the chatbot is answering as normal. Often both are true. This guide shows why, using real incidents from our own records.</p>
+<h2>A status page covers more than the part you use</h2>
+<p>A provider’s status page speaks to every kind of customer at once: people who chat with the assistant, developers who use the API, large organisations with their own compliance and billing tools, and advertisers. An incident on any of those goes on the same page. So a long incident list does not mean the chat product has been struggling, and the reverse can also be true. What matters is whether the affected part is one you use.</p>
+<h2>Examples from our records</h2>
+<p>Our checks began on 7 October 2026, so this is a small sample. All times are UTC. For each incident we keep the title and the provider’s own impact label, but not which components it touched, so we say only what the title says. Our ChatGPT verdict counts a named list of parts of the service (such as login, conversations, file uploads and image generation), and the pages for <a href="/is-chatgpt-down">ChatGPT</a> and <a href="/is-cursor-down">Cursor</a> say what is and is not counted.</p>
+<ul>
+<li><strong>A compliance report, for about 42 hours.</strong> On 14 October OpenAI listed “Delayed Costs data in the Compliance API”, labelled minor, which stayed open for roughly 42 hours. Our ChatGPT verdict stayed operational throughout, because that is not one of the parts of ChatGPT we count.</li>
+<li><strong>An alarming title with a label of “none”.</strong> On 15 October the title was “Widespread feature degradation”, and the provider’s own impact label was “none”. It lasted 76 minutes, and our verdict stayed operational.</li>
+<li><strong>API incidents.</strong> On 21 October OpenAI listed “Elevated FedRAMP API error rates for Astra and Sol”, open for more than five hours, and later an incident about elevated error rates for one model’s API requests. Both concern API access, not the chat product, and our ChatGPT verdict stayed operational.</li>
+<li><strong>Enterprise and advertising.</strong> On 22 October the page listed “Degraded Performance of Dots on Enterprise” and “New Ad Accounts failing to provision admins”. Neither is a chat problem for most people, and our verdict stayed operational.</li>
+<li><strong>Customer support.</strong> On 23 October the page listed “Delays in customer support responses”, labelled “none”. Status pages sometimes report on the provider’s own support desk.</li>
+</ul>
+<h2>The other way round: a label that undersold the problem</h2>
+<p>On 13 October Cursor’s page opened an incident called “Degraded performance and errors across Cursor services”, labelled minor, which lasted 168 minutes. Yet seven components, including the editor and the command line tool, were marked as major outages on the same page. We showed Cursor as down for about two hours, then as having issues, and as operational again at 03:10. The headline label said “minor”, but the component list told the real story. That is why we read the components first.</p>
+<h2>From our own use</h2>
+<p>In our own use, a service in chat mode sometimes works but its responses become slower and slower, while agents carry on working normally. One possible cause is a full context window, which is something on your side that you can influence, for example by starting a new conversation. That is when it helps to know whether the problem is something you control or a fault in one part of the service. A status page cannot show this, and neither can we, because we can only tell whether a service responds, not how fast it is.</p>
+<h2>What we have not seen</h2>
+<p>From 7 to 23 October 2026 our records show 45 changes in a service’s verdict. Twenty-two were caused by a provider’s status page reporting a problem, and the other 23 were recoveries. None were caused by our own test alone. Our test has never overruled a status page on its own, and we will say so in a future guide if it does. This is a short history, so treat it as a first look, not a long-term rate.</p>
+<h2>How to read an incident quickly</h2>
+<ol>
+<li><strong>Read the components, not the headline.</strong> Which part is affected: the website, the API, a coding tool, an admin console?</li>
+<li><strong>Ask whether it is a part you use.</strong> If you only chat, an API or billing incident is background noise.</li>
+<li><strong>Treat the impact label as a hint.</strong> “Minor” can sit on a serious incident and “none” on an alarming title, as above.</li>
+<li><strong>Check the time.</strong> Some incidents about reports or data run for days without affecting live use.</li>
+<li><strong>If everything you use looks fine and you still cannot get in,</strong> the cause is probably nearer to home. See <a href="/guides/status-page-says-up-but-broken">why a service can be up but broken for you</a>.</li>
+</ol>
+<p>For more on the labels and stages, read <a href="/guides/how-to-read-an-ai-status-page">how to read an AI status page</a>. Our <a href="/guides/how-we-check">method guide</a> explains what each of our verdicts counts, and the <a href="/reliability">reliability page</a> compares the services over the last 30 days.</p>
+${sourcesBlock(
+  [
+    ['OpenAI status page', 'https://status.openai.com'],
+    ['Cursor status page', 'https://status.cursor.com'],
+  ],
+  '23 October 2026',
+)}`,
   },
 ];
 
