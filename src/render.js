@@ -331,6 +331,7 @@ ${adUnit(env, env.ADSENSE_SLOT_INLINE)}
 <section class="prose">
 <h2>Is the problem the AI or you?</h2>
 <p>When a chatbot stops answering it is hard to tell whether the whole service is struggling or only your connection. Each tile above combines two signals: what the provider says on its own status page, and whether our servers can reach the service right now. If both look fine, the fault is probably nearer to home. Our guide on <a href="/guides/ai-chatbot-not-working">what to do when an AI chatbot stops working</a> walks through the usual fixes, and <a href="/guides/how-we-check">how we check</a> explains exactly what our verdicts do and do not tell you.</p>
+<p>Want the longer view? The <a href="/reliability">reliability comparison</a> puts all ${PLATFORMS.length} services side by side over the last 30 days, using our own checks and each provider's status page, and keeps a saved snapshot for each past month.</p>
 </section>
 <section class="prose faq">
 <h2>Questions people ask</h2>

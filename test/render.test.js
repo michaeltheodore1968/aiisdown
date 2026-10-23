@@ -232,3 +232,7 @@ test('reliability report: ranks services, hides what lacks data and explains the
   assert.equal(previousMonthKey(Date.UTC(2026, 0, 1)), '2025-12');
   assert.equal(monthLabel('2026-10'), 'October 2026');
 });
+
+test('home page links to the reliability comparison', () => {
+  assert.match(homePage(env, {}, now), /<a href="\/reliability">reliability comparison<\/a> puts all 10 services/);
+});
