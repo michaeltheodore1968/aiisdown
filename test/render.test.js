@@ -198,7 +198,7 @@ test('platform page: reliability summary is built from the data we hold', () => 
   assert.match(html, /97\.9% of our checks found Claude fully operational/);
   assert.match(html, /weakest day was 4 Oct 2026/);
   assert.match(html, /reported 2 incidents/);
-  assert.match(html, /1 of those coincided with an incident on AnthropicAnthropic.s page and 2 did not#39;s page and 2 did not/);
+  assert.match(html, /1 of those coincided with an incident on Anthropic&#39;s page and 2 did not/);
 });
 
 test('platform page: reliability summary says so when there is no history', () => {
