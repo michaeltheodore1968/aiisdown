@@ -22,7 +22,40 @@ async function loadStates(env) {
   return out;
 }
 
-async function loadExtras(env, slug) {
+const DAY_MS = 86400000;
+const MATCH_MS = 10 * 60 * 1000; // how close in time a status change and a provider incident must be to count as the same event
+
+// Totals over the last 30 days, computed in SQL so they are not capped at HISTORY_LIMIT rows.
+async function loadStats(env, slug, now) {
+  const since = now - 30 * DAY_MS;
+  const [inc, ev] = await Promise.all([
+    env.DB.prepare(
+      `SELECT COUNT(*) AS n,
+              SUM(resolved_at IS NULL) AS open,
+              SUM(resolved_at IS NOT NULL) AS resolved,
+              COALESCE(SUM(resolved_at - started_at), 0) AS total_ms,
+              COALESCE(MAX(resolved_at - started_at), 0) AS longest_ms
+         FROM incidents WHERE slug = ?1 AND started_at >= ?2`,
+    )
+      .bind(slug, since)
+      .first(),
+    env.DB.prepare(
+      `SELECT COUNT(*) AS n,
+              SUM(EXISTS (SELECT 1 FROM incidents i WHERE i.slug = e.slug AND i.started_at <= e.at + ?3
+                          AND COALESCE(i.resolved_at, 9007199254740991) >= e.at - ?3)) AS matched
+         FROM events e WHERE e.slug = ?1 AND e.at >= ?2 AND e.from_status = 'operational'`,
+    )
+      .bind(slug, since, MATCH_MS)
+      .first(),
+  ]);
+  return {
+    incidents: { n: inc?.n || 0, open: inc?.open || 0, resolved: inc?.resolved || 0, totalMs: inc?.total_ms || 0, longestMs: inc?.longest_ms || 0 },
+    changes: { n: ev?.n || 0, matched: ev?.matched || 0 },
+  };
+}
+
+async function loadExtras(env, slug, now) {
+  const stats = loadStats(env, slug, now);
   const [inc, ev] = await Promise.all([
     env.DB.prepare(
       'SELECT title, impact, started_at, updated_at, resolved_at FROM incidents WHERE slug = ?1 ORDER BY (resolved_at IS NULL) DESC, started_at DESC LIMIT ?2',
@@ -33,7 +66,7 @@ async function loadExtras(env, slug) {
       .bind(slug, HISTORY_LIMIT)
       .all(),
   ]);
-  return { incidents: inc.results, events: ev.results };
+  return { incidents: inc.results, events: ev.results, stats: await stats };
 }
 
 function html(body, status = 200, extra = {}) {
@@ -108,7 +141,7 @@ async function route(request, env, ctx) {
     }
     const p = BY_SLUG[slug];
     if (!p) return html(notFoundPage(env), 404, extra);
-    return html(platformPage(env, p, states[slug], await loadExtras(env, slug), now), 200, extra);
+    return html(platformPage(env, p, states[slug], await loadExtras(env, slug, now), now), 200, extra);
   }
 
   const simple = { '/guides': guidesIndex, '/faq': faqPage, '/about': aboutPage, '/privacy': privacyPage, '/terms': termsPage, '/contact': contactPage };

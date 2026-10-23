@@ -188,3 +188,20 @@ test('home and about pages say who is behind the site', () => {
   assert.equal(org.logo, 'https://aiisdown.com/logo-mark-512.png');
   assert.equal(org.parentOrganization, undefined);
 });
+
+test('platform page: reliability summary is built from the data we hold', () => {
+  const p = BY_SLUG.claude;
+  const days = { '2026-10-04': [270, 288], '2026-10-05': [288, 288], '2026-10-06': [288, 288] };
+  const stats = { incidents: { n: 2, open: 0, resolved: 2, totalMs: 5400_000, longestMs: 3600_000 }, changes: { n: 3, matched: 1 } };
+  const html = platformPage(env, p, state('operational', { days, feed: { ok: true, state: 'operational', issues: [], excluded: [] }, probes: [] }), { incidents: [], events: [], stats }, now);
+  assert.match(html, /<h2>Reliability summary<\/h2>/);
+  assert.match(html, /97\.9% of our checks found Claude fully operational/);
+  assert.match(html, /weakest day was 4 Oct 2026/);
+  assert.match(html, /reported 2 incidents/);
+  assert.match(html, /1 of those coincided with an incident on AnthropicAnthropic.s page and 2 did not#39;s page and 2 did not/);
+});
+
+test('platform page: reliability summary says so when there is no history', () => {
+  const html = platformPage(env, BY_SLUG.grok, state('operational'), { incidents: [], events: [] }, now);
+  assert.match(html, /not collected enough checks for Grok to summarise yet/);
+});
