@@ -1,6 +1,7 @@
 import { PLATFORMS, BY_SLUG, pagePath } from './platforms.js';
 import { HISTORY_LIMIT } from './util.js';
 import { runChecks } from './run.js';
+import { loadAllStats, buildReport, reportPage, snapshotMonth } from './report.js';
 import { homePage, platformPage, apiStatus, apiService } from './render.js';
 import { GUIDES, guidesIndex, guidePage, faqPage, aboutPage, privacyPage, termsPage, contactPage, notFoundPage } from './content.js';
 
@@ -22,40 +23,13 @@ async function loadStates(env) {
   return out;
 }
 
-const DAY_MS = 86400000;
-const MATCH_MS = 10 * 60 * 1000; // how close in time a status change and a provider incident must be to count as the same event
-
-// Totals over the last 30 days, computed in SQL so they are not capped at HISTORY_LIMIT rows.
-async function loadStats(env, slug, now) {
-  const since = now - 30 * DAY_MS;
-  const [inc, ev] = await Promise.all([
-    env.DB.prepare(
-      `SELECT COUNT(*) AS n,
-              SUM(resolved_at IS NULL) AS open,
-              SUM(resolved_at IS NOT NULL) AS resolved,
-              COALESCE(SUM(resolved_at - started_at), 0) AS total_ms,
-              COALESCE(MAX(resolved_at - started_at), 0) AS longest_ms
-         FROM incidents WHERE slug = ?1 AND started_at >= ?2`,
-    )
-      .bind(slug, since)
-      .first(),
-    env.DB.prepare(
-      `SELECT COUNT(*) AS n,
-              SUM(EXISTS (SELECT 1 FROM incidents i WHERE i.slug = e.slug AND i.started_at <= e.at + ?3
-                          AND COALESCE(i.resolved_at, 9007199254740991) >= e.at - ?3)) AS matched
-         FROM events e WHERE e.slug = ?1 AND e.at >= ?2 AND e.from_status = 'operational'`,
-    )
-      .bind(slug, since, MATCH_MS)
-      .first(),
-  ]);
-  return {
-    incidents: { n: inc?.n || 0, open: inc?.open || 0, resolved: inc?.resolved || 0, totalMs: inc?.total_ms || 0, longestMs: inc?.longest_ms || 0 },
-    changes: { n: ev?.n || 0, matched: ev?.matched || 0 },
-  };
+async function loadArchive(env) {
+  const { results } = await env.DB.prepare('SELECT month FROM monthly_reports ORDER BY month DESC LIMIT 36').all();
+  return results.map((r) => r.month);
 }
 
 async function loadExtras(env, slug, now) {
-  const stats = loadStats(env, slug, now);
+  const stats = loadAllStats(env, now).then((all) => all[slug]);
   const [inc, ev] = await Promise.all([
     env.DB.prepare(
       'SELECT title, impact, started_at, updated_at, resolved_at FROM incidents WHERE slug = ?1 ORDER BY (resolved_at IS NULL) DESC, started_at DESC LIMIT ?2',
@@ -96,11 +70,14 @@ async function lastCheck(env) {
 
 async function sitemap(env) {
   const site = env.SITE_URL.replace(/\/$/, '');
+  const months = await loadArchive(env);
   const live = await lastCheck(env);
   const liveSet = new Set(['/', ...PLATFORMS.map((p) => pagePath(p.slug))]);
   const paths = [
     '/',
     ...PLATFORMS.map((p) => pagePath(p.slug)),
+    '/reliability',
+    ...months.map((k) => `/reliability/${k}`),
     '/guides',
     ...GUIDES.map((g) => `/guides/${g.id}`),
     '/faq',
@@ -144,6 +121,16 @@ async function route(request, env, ctx) {
     return html(platformPage(env, p, states[slug], await loadExtras(env, slug, now), now), 200, extra);
   }
 
+  if (path === '/reliability') {
+    const [states, stats, archive] = await Promise.all([loadStates(env), loadAllStats(env, now), loadArchive(env)]);
+    return html(reportPage(env, buildReport(states, stats, now), { archive }), 200, extra);
+  }
+  if ((m = path.match(/^\/reliability\/(\d{4}-(?:0[1-9]|1[0-2]))$/))) {
+    const row = await env.DB.prepare('SELECT data FROM monthly_reports WHERE month = ?1').bind(m[1]).first();
+    if (row) return html(reportPage(env, JSON.parse(row.data), { month: m[1], archive: await loadArchive(env) }), 200, { ...extra, 'cache-control': 'public, max-age=3600' });
+    return html(notFoundPage(env), 404, extra);
+  }
+
   const simple = { '/guides': guidesIndex, '/faq': faqPage, '/about': aboutPage, '/privacy': privacyPage, '/terms': termsPage, '/contact': contactPage };
   if (simple[path]) return html(simple[path](env), 200, { ...extra, 'cache-control': 'public, max-age=3600' });
   if ((m = path.match(/^\/guides\/([a-z-]+)$/))) {
@@ -163,6 +150,13 @@ export default {
     }
   },
   async scheduled(event, env, ctx) {
-    ctx.waitUntil(runChecks(env, event.scheduledTime));
+    ctx.waitUntil(
+      (async () => {
+        await runChecks(env, event.scheduledTime);
+        // Just after midnight UTC on the 1st, save last month's comparison.
+        const d = new Date(event.scheduledTime);
+        if (d.getUTCDate() === 1 && d.getUTCHours() === 0 && d.getUTCMinutes() < 10) await snapshotMonth(env, event.scheduledTime);
+      })().catch((e) => console.error('aiisdown: scheduled run failed', e)),
+    );
   },
 };

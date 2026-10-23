@@ -130,3 +130,9 @@ details p { margin: 8px 0 0; color: var(--muted); }
 .site-footer p { margin: 0 0 12px; max-width: 720px; }
 .site-footer nav { display: flex; flex-wrap: wrap; gap: 6px 18px; }
 .site-footer a { color: var(--muted); }
+
+.table-wrap { overflow-x: auto; margin: 16px 0; }
+.compare { border-collapse: collapse; width: 100%; min-width: 560px; font-size: 0.95rem; }
+.compare caption { text-align: left; padding-bottom: 8px; }
+.compare th, .compare td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--line); }
+.compare thead th { font-size: 0.85rem; color: var(--muted); font-weight: 600; }

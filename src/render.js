@@ -72,7 +72,7 @@ ${ads}
 <a class="skip" href="#main">Skip to the content</a>
 <header class="site-header"><div class="wrap">
 <a class="brand" href="/"><img class="brand-mark" src="/logo-mark.svg" width="32" height="32" alt=""> Is AI Down?<span class="brand-domain">aiisdown.com</span></a>
-<nav aria-label="Main"><a href="/">All services</a><a href="/guides">Guides</a><a href="/about">About</a></nav>
+<nav aria-label="Main"><a href="/">All services</a><a href="/reliability">Reliability</a><a href="/guides">Guides</a><a href="/about">About</a></nav>
 </div></header>
 <main id="main" class="wrap">
 ${body}
@@ -80,7 +80,7 @@ ${body}
 <footer class="site-footer"><div class="wrap">
 <p>Is AI Down? (aiisdown.com) is run by ${esc(env.OPERATOR_NAME || 'its operator')}.${env.OPERATOR_ADDRESS ? `<br>${esc(env.OPERATOR_ADDRESS)}` : ''}<br><a href="tel:+447557868086">07557 868086</a></p>
 <p>Is AI Down? is an independent service. It is not affiliated with, or endorsed by, OpenAI, Anthropic, Google, Microsoft, Perplexity, xAI, DeepSeek, Mistral, GitHub or Anysphere. Product names belong to their owners.</p>
-<nav aria-label="Footer"><a href="/about">About</a><a href="/guides">Guides</a><a href="/faq">FAQ</a><a href="/privacy">Privacy</a><a href="/terms">Terms</a><a href="/contact">Contact</a><a href="/api/status.json">JSON API</a></nav>
+<nav aria-label="Footer"><a href="/about">About</a><a href="/reliability">Reliability</a><a href="/guides">Guides</a><a href="/faq">FAQ</a><a href="/privacy">Privacy</a><a href="/terms">Terms</a><a href="/contact">Contact</a><a href="/api/status.json">JSON API</a></nav>
 </div></footer>
 <script>
 (function(){var n=Date.now();document.querySelectorAll('time[data-rel]').forEach(function(t){var s=Math.max(0,Math.round((n-Date.parse(t.getAttribute('datetime')))/1000));var m=Math.round(s/60),h=Math.round(m/60);t.textContent=s<60?'just now':m<60?m+' min ago':h<48?h+' h ago':Math.round(h/24)+' days ago';});})();
