@@ -332,6 +332,7 @@ ${adUnit(env, env.ADSENSE_SLOT_INLINE)}
 <h2>Is the problem the AI or you?</h2>
 <p>When a chatbot stops answering it is hard to tell whether the whole service is struggling or only your connection. Each tile above combines two signals: what the provider says on its own status page, and whether our servers can reach the service right now. If both look fine, the fault is probably nearer to home. Our guide on <a href="/guides/ai-chatbot-not-working">what to do when an AI chatbot stops working</a> walks through the usual fixes, and <a href="/guides/how-we-check">how we check</a> explains exactly what our verdicts do and do not tell you.</p>
 <p>Want the longer view? The <a href="/reliability">reliability comparison</a> puts all ${PLATFORMS.length} services side by side over the last 30 days, using our own checks and each provider's status page, and keeps a saved snapshot for each past month.</p>
+<p>Using an AI through its API? Our guide to <a href="/guides/ai-error-codes-explained">AI error codes</a> explains which numbers point to the service and which to your own setup, and the <a href="/guides/ai-api-down-developer-checklist">developer checklist</a> covers what to do when an AI API goes down. All of our <a href="/guides">guides</a> are in one place.</p>
 </section>
 <section class="prose faq">
 <h2>Questions people ask</h2>
@@ -472,7 +473,7 @@ ${events ? `<ul class="timeline">${events}</ul>` : `<p>We have not seen ${esc(p.
 ${aboutSection(p)}
 <section class="prose">
 <h2>If ${esc(p.name)} is not working for you</h2>
-<p>Check the two signals above first. When both look healthy, try a different device or network, sign out and back in, and switch off any VPN or browser extensions. Hitting a usage limit can look like an outage, so check for a message about limits. Our guide has the <a href="/guides/ai-chatbot-not-working">full checklist</a>, and another explains <a href="/guides/status-page-says-up-but-broken">why a service can be up but broken for you</a>.</p>
+<p>Check the two signals above first. When both look healthy, try a different device or network, sign out and back in, and switch off any VPN or browser extensions. Hitting a usage limit can look like an outage, so check for a message about limits. Our guide has the <a href="/guides/ai-chatbot-not-working">full checklist</a>, and another explains <a href="/guides/status-page-says-up-but-broken">why a service can be up but broken for you</a>. If you use the API and see an error number, the guide to <a href="/guides/ai-error-codes-explained">AI error codes</a> shows which side it points to, and the <a href="/guides/ai-api-down-developer-checklist">developer checklist</a> covers what to do when an API is down.</p>
 </section>
 <section class="prose faq">
 <h2>Questions about ${esc(p.name)} status</h2>

@@ -360,6 +360,10 @@ const FAQS = () => [
     'A verdict describes the service as a whole. It cannot see your account, your network, your region or whether you have reached a usage limit. Read <a href="/guides/status-page-says-up-but-broken">why a service can be up but broken for you</a>, then work through <a href="/guides/ai-chatbot-not-working">what to do when an AI chatbot stops working</a>.',
   ],
   [
+    'What does an error number such as 429 or 503 mean?',
+    'As a rule, 429 is about limits on your account or usage, while 500, 503 and 529 point to the service. The guide to <a href="/guides/ai-error-codes-explained">AI error codes</a> goes through each one. If you build on an AI API, the <a href="/guides/ai-api-down-developer-checklist">developer checklist</a> covers what to do when it goes down.',
+  ],
+  [
     'Which services do you cover?',
     `${PLATFORMS.map((p) => esc(p.name)).join(', ')}. Each has its own page, and the home page shows them all together.`,
   ],
@@ -443,7 +447,7 @@ export function aboutPage(env) {
 <li>We do not claim to spot outages before the provider does. We report what our checks saw and when.</li>
 </ul>
 <h2>How it is paid for</h2>
-<p>The site is funded by advertising, and advertising never changes a verdict. Details of how ads and data are handled are in the <a href="/privacy">privacy policy</a>.</p>
+<p>We plan to fund the site with advertising, and advertising never changes a verdict. Details of how ads and data are handled are in the <a href="/privacy">privacy policy</a>.</p>
 <h2>Corrections and requests</h2>
 <p>If a verdict looks wrong, or you would like another service added, tell us through the <a href="/contact">contact page</a>. Please include the service name and roughly when you saw the problem, and we will look at what our checks recorded at that time.</p>`,
     {
