@@ -423,10 +423,29 @@ export function aboutPage(env) {
     'About Is AI Down? Who runs it and how it works',
     'What Is AI Down? is, how it works, and how to contact us.',
     `<h1>About Is AI Down?</h1>
-<p>Is AI Down? (aiisdown.com) is a small, independent website that tells you whether the main AI services are working. It currently covers ${PLATFORMS.map((p) => esc(p.name)).join(', ')}.</p>
-<p>Every five minutes we read each provider’s own status page, where one is available, and test whether the service answers. The page for each service shows both signals side by side, so you can see why we are saying what we say. The full method is in <a href="/guides/how-we-check">how we check</a>.</p>
-<p>The site is run by ${operator(env)}. It is funded by advertising, which never changes a verdict. We are not affiliated with any of the companies we cover.</p>
-<p>Spotted a wrong verdict, or want another service added? Tell us through the <a href="/contact">contact page</a>.</p>`,
+<p class="lede">Is AI Down? (aiisdown.com) answers two questions: is the AI service you are trying to use working right now, and, if it seems not to be, is the fault with the service or with something on your side?</p>
+<h2>Why we built it</h2>
+<p>We built Is AI Down? because the person behind it is a professional researcher who uses AI tools, services and agents throughout the working day, and wanted a simple way to check the main language models with the detail they prefer. We wanted to show the provider’s official status and our own results side by side, and to be specific about which part of a service is unavailable, such as the website, the API or a single feature, instead of one red or green light. It was built with Claude.</p>
+<p>We do not cover everything. We would rather check a short list properly than a long one badly, and we are building a 30-day comparison that fills in as our history grows. Until a service has a full 30 days, its page says how many days the figure covers.</p>
+<h2>What it covers</h2>
+<p>We watch ${PLATFORMS.length} services: ${PLATFORMS.map((p) => esc(p.name)).join(', ')}. These are the ones most people reach for.</p>
+<h2>Who runs it</h2>
+<p>The site is run by ${operator(env)} as an independent project. We are not affiliated with, paid by or endorsed by any of the companies we cover. Their names and marks belong to them and appear only to say which service we mean.</p>
+<h2>How a verdict is reached</h2>
+<p>Every five minutes we gather two kinds of evidence for each service: the provider’s own status page, read by machine where the provider publishes a feed we can use, and a plain request of our own to see whether the service answers. The page for each service shows both signals side by side, so you can see why we say what we say.</p>
+<p>We are deliberately cautious about the word “down”. Our own test on its own can never overrule a provider’s status page that says all is well, because the commonest mistake a checker makes is calling a healthy site dead when it simply dislikes automated requests. Where a provider publishes no readable feed, the page says so and the verdict rests on our checks alone. The whole method, including what we cannot see, is in <a href="/guides/how-we-check">how we check</a>.</p>
+<h2>What we publish that is our own</h2>
+<p>Because we run the same checks on every service, we keep a record of them. The <a href="/reliability">reliability page</a> compares the services over the last 30 days using our own five-minute checks, and each service page carries a short written summary built from the same figures. The same data is free as JSON at <a href="/api/status.json">/api/status.json</a> for anyone who wants to use it.</p>
+<h2>What we do not do</h2>
+<ul>
+<li>We do not collect reports from users, so nothing here is a vote or a guess about how many people are affected.</li>
+<li>We cannot see your account, your network, your region or whether you have reached a usage limit. If a service shows as operational and still fails for you, the <a href="/guides/ai-chatbot-not-working">troubleshooting guide</a> is the place to start.</li>
+<li>We do not claim to spot outages before the provider does. We report what our checks saw and when.</li>
+</ul>
+<h2>How it is paid for</h2>
+<p>The site is funded by advertising, and advertising never changes a verdict. Details of how ads and data are handled are in the <a href="/privacy">privacy policy</a>.</p>
+<h2>Corrections and requests</h2>
+<p>If a verdict looks wrong, or you would like another service added, tell us through the <a href="/contact">contact page</a>. Please include the service name and roughly when you saw the problem, and we will look at what our checks recorded at that time.</p>`,
     {
       ld: [
         {
