@@ -188,3 +188,51 @@ test('home and about pages say who is behind the site', () => {
   assert.equal(org.logo, 'https://aiisdown.com/logo-mark-512.png');
   assert.equal(org.parentOrganization, undefined);
 });
+
+test('platform page: reliability summary is built from the data we hold', () => {
+  const p = BY_SLUG.claude;
+  const days = { '2026-10-04': [270, 288], '2026-10-05': [288, 288], '2026-10-06': [288, 288] };
+  const stats = { incidents: { n: 2, open: 0, resolved: 2, totalMs: 5400_000, longestMs: 3600_000 }, changes: { n: 3, matched: 1 } };
+  const html = platformPage(env, p, state('operational', { days, feed: { ok: true, state: 'operational', issues: [], excluded: [] }, probes: [] }), { incidents: [], events: [], stats }, now);
+  assert.match(html, /<h2>Reliability summary<\/h2>/);
+  assert.match(html, /97\.9% of our checks found Claude fully operational/);
+  assert.match(html, /weakest day was 4 Oct 2026/);
+  assert.match(html, /reported 2 incidents/);
+  assert.match(html, /1 of those coincided with an incident on Anthropic&#39;s page and 2 did not/);
+});
+
+test('platform page: reliability summary says so when there is no history', () => {
+  const html = platformPage(env, BY_SLUG.grok, state('operational'), { incidents: [], events: [] }, now);
+  assert.match(html, /not collected enough checks for Grok to summarise yet/);
+});
+
+test('reliability report: ranks services, hides what lacks data and explains the limits', async () => {
+  const { buildReport, reportSummary, reportPage, previousMonthKey, monthLabel } = await import('../src/report.js');
+  const good = { days: { '2026-10-04': [288, 288], '2026-10-05': [288, 288], '2026-10-06': [288, 288] } };
+  const rough = { days: { '2026-10-04': [250, 288], '2026-10-05': [288, 288], '2026-10-06': [288, 288] } };
+  const states = { claude: { data: good }, chatgpt: { data: rough } };
+  const zero = { incidents: { n: 0, open: 0, resolved: 0, totalMs: 0, longestMs: 0 }, changes: { n: 0, matched: 0 } };
+  const stats = Object.fromEntries(PLATFORMS.map((p) => [p.slug, zero]));
+  stats.chatgpt = { incidents: { n: 2, open: 0, resolved: 2, totalMs: 3600_000, longestMs: 2400_000 }, changes: { n: 2, matched: 1 } };
+  const report = buildReport(states, stats, now);
+  assert.equal(report.rows.find((r) => r.slug === 'claude').uptime, 100);
+  assert.equal(report.rows.find((r) => r.slug === 'grok').uptime, null);
+  assert.equal(report.rows.find((r) => r.slug === 'grok').incidents, null);
+  const lines = reportSummary(report).join(' ');
+  assert.match(lines, /Of the 2 services with enough data, Claude had the highest share .* at 100% and ChatGPT the lowest at 95\.6%/);
+  assert.match(lines, /ChatGPT had the most incidents/);
+  const html = reportPage(env, report, { archive: ['2026-09'] });
+  assert.match(html, /<h1>How reliable are the AI services\? The last 30 days<\/h1>/);
+  assert.match(html, /Building history/);
+  assert.match(html, /No readable feed/);
+  assert.match(html, /href="\/reliability\/2026-09">September 2026/);
+  const snap = reportPage(env, report, { month: '2026-09', archive: [] });
+  assert.match(snap, /AI service reliability in September 2026/);
+  assert.match(snap, /canonical" href="https:\/\/aiisdown\.com\/reliability\/2026-09"/);
+  assert.equal(previousMonthKey(Date.UTC(2026, 0, 1)), '2025-12');
+  assert.equal(monthLabel('2026-10'), 'October 2026');
+});
+
+test('home page links to the reliability comparison', () => {
+  assert.match(homePage(env, {}, now), /<a href="\/reliability">reliability comparison<\/a> puts all 10 services/);
+});

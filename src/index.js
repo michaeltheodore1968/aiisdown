@@ -1,6 +1,7 @@
 import { PLATFORMS, BY_SLUG, pagePath } from './platforms.js';
 import { HISTORY_LIMIT } from './util.js';
 import { runChecks } from './run.js';
+import { loadAllStats, buildReport, reportPage, snapshotMonth } from './report.js';
 import { homePage, platformPage, apiStatus, apiService } from './render.js';
 import { GUIDES, guidesIndex, guidePage, faqPage, aboutPage, privacyPage, termsPage, contactPage, notFoundPage } from './content.js';
 
@@ -22,7 +23,13 @@ async function loadStates(env) {
   return out;
 }
 
-async function loadExtras(env, slug) {
+async function loadArchive(env) {
+  const { results } = await env.DB.prepare('SELECT month FROM monthly_reports ORDER BY month DESC LIMIT 36').all();
+  return results.map((r) => r.month);
+}
+
+async function loadExtras(env, slug, now) {
+  const stats = loadAllStats(env, now).then((all) => all[slug]);
   const [inc, ev] = await Promise.all([
     env.DB.prepare(
       'SELECT title, impact, started_at, updated_at, resolved_at FROM incidents WHERE slug = ?1 ORDER BY (resolved_at IS NULL) DESC, started_at DESC LIMIT ?2',
@@ -33,7 +40,7 @@ async function loadExtras(env, slug) {
       .bind(slug, HISTORY_LIMIT)
       .all(),
   ]);
-  return { incidents: inc.results, events: ev.results };
+  return { incidents: inc.results, events: ev.results, stats: await stats };
 }
 
 function html(body, status = 200, extra = {}) {
@@ -63,11 +70,14 @@ async function lastCheck(env) {
 
 async function sitemap(env) {
   const site = env.SITE_URL.replace(/\/$/, '');
+  const months = await loadArchive(env);
   const live = await lastCheck(env);
   const liveSet = new Set(['/', ...PLATFORMS.map((p) => pagePath(p.slug))]);
   const paths = [
     '/',
     ...PLATFORMS.map((p) => pagePath(p.slug)),
+    '/reliability',
+    ...months.map((k) => `/reliability/${k}`),
     '/guides',
     ...GUIDES.map((g) => `/guides/${g.id}`),
     '/faq',
@@ -108,7 +118,17 @@ async function route(request, env, ctx) {
     }
     const p = BY_SLUG[slug];
     if (!p) return html(notFoundPage(env), 404, extra);
-    return html(platformPage(env, p, states[slug], await loadExtras(env, slug), now), 200, extra);
+    return html(platformPage(env, p, states[slug], await loadExtras(env, slug, now), now), 200, extra);
+  }
+
+  if (path === '/reliability') {
+    const [states, stats, archive] = await Promise.all([loadStates(env), loadAllStats(env, now), loadArchive(env)]);
+    return html(reportPage(env, buildReport(states, stats, now), { archive }), 200, extra);
+  }
+  if ((m = path.match(/^\/reliability\/(\d{4}-(?:0[1-9]|1[0-2]))$/))) {
+    const row = await env.DB.prepare('SELECT data FROM monthly_reports WHERE month = ?1').bind(m[1]).first();
+    if (row) return html(reportPage(env, JSON.parse(row.data), { month: m[1], archive: await loadArchive(env) }), 200, { ...extra, 'cache-control': 'public, max-age=3600' });
+    return html(notFoundPage(env), 404, extra);
   }
 
   const simple = { '/guides': guidesIndex, '/faq': faqPage, '/about': aboutPage, '/privacy': privacyPage, '/terms': termsPage, '/contact': contactPage };
@@ -130,6 +150,13 @@ export default {
     }
   },
   async scheduled(event, env, ctx) {
-    ctx.waitUntil(runChecks(env, event.scheduledTime));
+    ctx.waitUntil(
+      (async () => {
+        await runChecks(env, event.scheduledTime);
+        // Just after midnight UTC on the 1st, save last month's comparison.
+        const d = new Date(event.scheduledTime);
+        if (d.getUTCDate() === 1 && d.getUTCHours() === 0 && d.getUTCMinutes() < 10) await snapshotMonth(env, event.scheduledTime);
+      })().catch((e) => console.error('aiisdown: scheduled run failed', e)),
+    );
   },
 };

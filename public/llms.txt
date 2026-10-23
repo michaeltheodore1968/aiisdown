@@ -21,6 +21,7 @@
 - [Is Cursor down?](https://aiisdown.com/is-cursor-down)
 
 ## Method and data
+- [Reliability, last 30 days](https://aiisdown.com/reliability): all services compared, with a saved snapshot each month
 - [FAQ](https://aiisdown.com/faq): common questions about how verdicts work
 - [How to read an AI status page](https://aiisdown.com/guides/how-to-read-an-ai-status-page)
 - [AI error codes explained](https://aiisdown.com/guides/ai-error-codes-explained)

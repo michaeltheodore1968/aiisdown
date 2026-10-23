@@ -72,7 +72,7 @@ ${ads}
 <a class="skip" href="#main">Skip to the content</a>
 <header class="site-header"><div class="wrap">
 <a class="brand" href="/"><img class="brand-mark" src="/logo-mark.svg" width="32" height="32" alt=""> Is AI Down?<span class="brand-domain">aiisdown.com</span></a>
-<nav aria-label="Main"><a href="/">All services</a><a href="/guides">Guides</a><a href="/about">About</a></nav>
+<nav aria-label="Main"><a href="/">All services</a><a href="/reliability">Reliability</a><a href="/guides">Guides</a><a href="/about">About</a></nav>
 </div></header>
 <main id="main" class="wrap">
 ${body}
@@ -80,7 +80,7 @@ ${body}
 <footer class="site-footer"><div class="wrap">
 <p>Is AI Down? (aiisdown.com) is run by ${esc(env.OPERATOR_NAME || 'its operator')}.${env.OPERATOR_ADDRESS ? `<br>${esc(env.OPERATOR_ADDRESS)}` : ''}<br><a href="tel:+447557868086">07557 868086</a></p>
 <p>Is AI Down? is an independent service. It is not affiliated with, or endorsed by, OpenAI, Anthropic, Google, Microsoft, Perplexity, xAI, DeepSeek, Mistral, GitHub or Anysphere. Product names belong to their owners.</p>
-<nav aria-label="Footer"><a href="/about">About</a><a href="/guides">Guides</a><a href="/faq">FAQ</a><a href="/privacy">Privacy</a><a href="/terms">Terms</a><a href="/contact">Contact</a><a href="/api/status.json">JSON API</a></nav>
+<nav aria-label="Footer"><a href="/about">About</a><a href="/reliability">Reliability</a><a href="/guides">Guides</a><a href="/faq">FAQ</a><a href="/privacy">Privacy</a><a href="/terms">Terms</a><a href="/contact">Contact</a><a href="/api/status.json">JSON API</a></nav>
 </div></footer>
 <script>
 (function(){var n=Date.now();document.querySelectorAll('time[data-rel]').forEach(function(t){var s=Math.max(0,Math.round((n-Date.parse(t.getAttribute('datetime')))/1000));var m=Math.round(s/60),h=Math.round(m/60);t.textContent=s<60?'just now':m<60?m+' min ago':h<48?h+' h ago':Math.round(h/24)+' days ago';});})();
@@ -144,6 +144,52 @@ function historyNote(p, days, shown) {
   if (!seen.length) return `We have not recorded any history for ${p.name} yet.`;
   if (seen.length < 30) return `We began watching ${p.name} on ${dayLabel(seen[0])}, so nothing earlier appears here. ${missed}${capped}`;
   return `Resolved incidents and status changes are kept for 90 days. ${missed}${capped}`;
+}
+
+// A plain-words reading of the last 30 days, built only from what we hold. Each sentence is left out when its data is missing.
+export function reliabilitySummary(p, days, stats, now) {
+  const series = daySeries(days, now).filter((d) => d.total >= 3);
+  if (!series.length) return [];
+  const out = [];
+  const u = uptime(days);
+  out.push(
+    u === null
+      ? `We have ${series.length} ${series.length === 1 ? 'day' : 'days'} of checks for ${p.name} so far, which is too few for a reliable uptime figure.`
+      : `Over the last ${series.length < 30 ? `${series.length} days` : '30 days'}, ${u}% of our checks found ${p.name} fully operational.`,
+  );
+  if (series.length >= 3) {
+    const worst = series.reduce((a, b) => (b.ok / b.total < a.ok / a.total ? b : a));
+    const r = worst.ok / worst.total;
+    out.push(
+      r >= 1
+        ? `Every day we have data for was fully operational.`
+        : `The weakest day was ${dayLabel(worst.day)}, when ${Math.round(r * 1000) / 10}% of checks were fully operational.`,
+    );
+  }
+  const inc = stats?.incidents;
+  if (!p.feed) {
+    out.push(`${p.vendor} publishes no status feed we can read, so there are no provider incidents to compare with; everything here comes from our own checks.`);
+  } else if (inc) {
+    if (!inc.n) out.push(`${p.vendor}'s status page reported no incidents in that period.`);
+    else {
+      const bits = [`${p.vendor}'s status page reported ${inc.n} ${inc.n === 1 ? 'incident' : 'incidents'}`];
+      if (inc.open) bits.push(`${inc.open} still open`);
+      if (inc.resolved) bits.push(`${inc.resolved === 1 ? 'the resolved one' : `the ${inc.resolved} resolved ones`} lasted ${duration(inc.totalMs)} in total, the longest ${duration(inc.longestMs)}`);
+      out.push(`${bits.join(', ')}.${p.feed.incidents === 'info' ? ' That page covers more than this service, so not all of them will have touched it.' : ''}`);
+    }
+  }
+  const ch = stats?.changes;
+  if (ch?.n) {
+    const alone = ch.n - ch.matched;
+    out.push(
+      !p.feed
+        ? `We saw ${p.name} leave fully operational ${ch.n} ${ch.n === 1 ? 'time' : 'times'}.`
+        : `We saw ${p.name} leave fully operational ${ch.n} ${ch.n === 1 ? 'time' : 'times'}; ${ch.matched} of those coincided with an incident on ${p.vendor}'s page and ${alone} did not.`,
+    );
+  } else if (series.length >= 3) {
+    out.push(`We have not seen ${p.name} leave fully operational in that period.`);
+  }
+  return out;
 }
 
 // ------------------------------------------------------------ the words
@@ -285,6 +331,7 @@ ${adUnit(env, env.ADSENSE_SLOT_INLINE)}
 <section class="prose">
 <h2>Is the problem the AI or you?</h2>
 <p>When a chatbot stops answering it is hard to tell whether the whole service is struggling or only your connection. Each tile above combines two signals: what the provider says on its own status page, and whether our servers can reach the service right now. If both look fine, the fault is probably nearer to home. Our guide on <a href="/guides/ai-chatbot-not-working">what to do when an AI chatbot stops working</a> walks through the usual fixes, and <a href="/guides/how-we-check">how we check</a> explains exactly what our verdicts do and do not tell you.</p>
+<p>Want the longer view? The <a href="/reliability">reliability comparison</a> puts all ${PLATFORMS.length} services side by side over the last 30 days, using our own checks and each provider's status page, and keeps a saved snapshot for each past month.</p>
 </section>
 <section class="prose faq">
 <h2>Questions people ask</h2>
@@ -407,6 +454,11 @@ ${bars30(d.days)}
 </section>
 ${adUnit(env, env.ADSENSE_SLOT_INLINE)}
 <section class="prose">
+<h2>Reliability summary</h2>
+${(() => {
+  const lines = reliabilitySummary(p, d.days, extra.stats, now);
+  return lines.length ? `<p>${lines.map(esc).join(' ')}</p>` : `<p>We have not collected enough checks for ${esc(p.name)} to summarise yet.</p>`;
+})()}
 <h2>Outage and incident history</h2>
 <p class="muted">${esc(historyNote(p, d.days, Math.max((extra.incidents || []).length, (extra.events || []).length)))}</p>
 ${

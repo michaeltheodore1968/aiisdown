@@ -5,7 +5,7 @@ Live status of the main AI services (ChatGPT, Claude, Gemini, Perplexity, Micros
 One Worker does everything:
 
 - **Cron, every five minutes.** Reads each provider's own status feed where one can be read by a script, sends its own request to each service's website and API, fuses the two into one verdict, and writes the result to D1.
-- **Pages.** Server-rendered from D1: a home page, one page per service at `/is-<slug>-down`, three guides, and the legal pages AdSense expects.
+- **Pages.** Server-rendered from D1: a home page, one page per service at `/is-<slug>-down`, a cross-service reliability comparison at `/reliability` (snapshotted into D1 just after midnight UTC on the 1st of each month and served at `/reliability/YYYY-MM`), the guides, and the legal pages AdSense expects.
 - **JSON.** `/api/status.json` and `/api/<slug>.json`, plus `llms.txt` and a sitemap.
 - **Static assets** (`public/`) are free and unlimited on Cloudflare.
 
